@@ -163,10 +163,9 @@ button[onclick="resetColor()"] {
   <button onclick="execCmd('justifyCenter')">Centro</button>
   <button onclick="execCmd('justifyRight')">DX</button>
   <button onclick="execCmd('insertHorizontalRule')">Linea</button>
-  <button onclick="insertTable()">📋 Tabella</button>
-  <button onclick="clearEditor()">🧹 Pulisci</button>
-  <button onclick="openAdvancedTableModal()">📋 Tabella Super Avanzata</button>
+  <button onclick="openAdvancedTableModal()">📋 Tabella</button>
   <button onclick="deleteSelectedTable()">🗑 Elimina Tabella</button>
+  <button onclick="clearEditor()">🧹 Pulisci</button>
 
   <div id="colorMenu" class="color-menu hidden">
     <button class="color-item" data-class="text-red"><span>Red</span><span class="swatch bg-red"></span></button>
@@ -242,7 +241,6 @@ button[onclick="resetColor()"] {
 <script>
 /* ==================== FUNZIONI BASE ==================== */
 function execCmd(cmd) { document.execCommand(cmd,false,null); updateOutput(); }
-function insertTable(){ const r=prompt("Righe:",2); const c=prompt("Colonne:",2); if(!r||!c) return; let html="<table border='1' style='border-collapse:collapse'>"; for(let i=0;i<r;i++){ html+="<tr>"; for(let j=0;j<c;j++) html+="<td>Cella</td>"; html+="</tr>"; } html+="</table>"; document.execCommand("insertHTML",false,html); updateOutput(); }
 function clearEditor(){ document.getElementById("editor").innerHTML=""; updateOutput(); }
 function copyHTML(){ const t=document.getElementById("html-output"); t.select(); document.execCommand("copy"); alert("HTML copiato!"); }
 function resetColor() { const sel = window.getSelection(); if (!sel.rangeCount) return; const range = sel.getRangeAt(0); if (range.collapsed) return; const fragment = range.extractContents(); function removeTextClasses(node){ if(node.nodeType===1){ node.className=node.className.split(" ").filter(c=>!c.startsWith("text-")).join(" "); Array.from(node.childNodes).forEach(removeTextClasses); } } Array.from(fragment.childNodes).forEach(removeTextClasses); range.insertNode(fragment); updateOutput(); }
