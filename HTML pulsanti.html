@@ -19,6 +19,8 @@ h2 { margin-bottom: 10px; }
 }
 .toolbar button {
   padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
   cursor: pointer;
 }
 /* Bottone Colore */
@@ -30,6 +32,13 @@ h2 { margin-bottom: 10px; }
   border: 1px solid #ccc;
   padding: 5px 8px;
   cursor: pointer;
+}
+.color-menu .color-item {
+  padding: 4px 6px;      
+  border-radius: 3px;    
+  border: none;          
+  font-size: 12px;
+  background: transparent;
 }
 /* Bottone Reset Colore */
 button[onclick="resetColor()"] {
@@ -87,8 +96,6 @@ button[onclick="resetColor()"] {
   border: 1px solid #ccc;
   padding: 8px;
   width: 200px;
-  max-height: 380px;
-  overflow-y: auto;
   box-shadow: 0 4px 12px rgba(0,0,0,.15);
   z-index: 100;
 }
