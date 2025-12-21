@@ -166,6 +166,7 @@ button[onclick="resetColor()"] {
   <button onclick="insertTable()">📋 Tabella</button>
   <button onclick="clearEditor()">🧹 Pulisci</button>
   <button onclick="openAdvancedTableModal()">📋 Tabella Super Avanzata</button>
+  <button onclick="deleteSelectedTable()">🗑 Elimina Tabella</button>
 
   <div id="colorMenu" class="color-menu hidden">
     <button class="color-item" data-class="text-red"><span>Red</span><span class="swatch bg-red"></span></button>
@@ -201,23 +202,23 @@ button[onclick="resetColor()"] {
 <!-- MODALE SUPER AVANZATA -->
 <div id="advancedTableModal">
   <h3>Configura Tabella Super Avanzata</h3>
-  <label>Righe: <input type="number" id="advRows" value="2" min="1"></label>
-  <label>Colonne: <input type="number" id="advCols" value="2" min="1"></label><br><br>
+  <label>Righe: <input type="number" id="advRows" value="2" min="1" style="width:40px;text-align:center;"></label>
+  <label>Colonne: <input type="number" id="advCols" value="2" min="1" style="width:40px;text-align:center;"></label><br><br>
 <label>Larghezza celle: 
   <button type="button" onclick="changeCellWidth(-10)">−</button>
-  <input type="text" id="advWidth" value="100px">
+  <input type="text" id="advWidth" value="100px" style="width:60px;text-align:center;">
   <button type="button" onclick="changeCellWidth(10)">+</button>
 </label>
 
 <label>Altezza celle: 
   <button type="button" onclick="changeCellHeight(-5)">−</button>
-  <input type="text" id="advHeight" value="50px">
+  <input type="text" id="advHeight" value="50px" style="width:60px;text-align:center;">
   <button type="button" onclick="changeCellHeight(5)">+</button>
 </label>
 <br><br>
 <label>Bordo: 
   <button type="button" onclick="changeCellBorder(-1)">−</button>
-  <input type="text" id="advBorder" value="1px solid #000">
+  <input type="text" id="advBorder" value="1px solid #000" style="width:80px;text-align:center;">
   <button type="button" onclick="changeCellBorder(1)">+</button>
 </label>
 <br><br>
@@ -296,7 +297,18 @@ function advDelCol(){ if(advTable.rows[0].cells.length>1){ Array.from(advTable.r
 function copySelectedRows(){ copiedRows=[]; advTable.querySelectorAll('tr').forEach(tr=>{ let rowCopy=[]; Array.from(tr.cells).forEach(td=>{ if(selectedCells.has(td)) rowCopy.push(td.cloneNode(true)); }); if(rowCopy.length) copiedRows.push(rowCopy); }); alert('Righe copiate!'); }
 function pasteRows(){ copiedRows.forEach(rowCells=>{ const newRow=document.createElement('tr'); rowCells.forEach(td=>{ const newCell=td.cloneNode(true); newCell.onmousedown=(e)=>startSelection(e,newCell); newCell.onmouseover=(e)=>continueSelection(e,newCell); newRow.appendChild(newCell); }); advTable.appendChild(newRow); }); document.getElementById('advRows').value=advTable.rows.length; }
 
-function insertAdvTable(){ const wrapper=document.createElement('div'); wrapper.appendChild(advTable.cloneNode(true)); const sel=window.getSelection(); if(!sel.rangeCount) return; const range=sel.getRangeAt(0); range.deleteContents(); range.insertNode(wrapper); closeAdvancedTableModal(); selectedCells.clear(); updateOutput(); }
+function insertAdvTable(){
+  const tableHTML = advTable.outerHTML; // prendi solo la tabella
+  const sel = window.getSelection();
+  if(!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  range.deleteContents();
+  // Inserisci la tabella usando insertHTML
+  document.execCommand('insertHTML', false, tableHTML);
+  closeAdvancedTableModal();
+  selectedCells.clear();
+  updateOutput();
+}
 function resetSelectedCellsColor(){
   selectedCells.forEach(td=>{
     td.style.background="#ffffff";
@@ -312,7 +324,24 @@ function changeCellWidth(delta){
   input.value=value+'px';
   updateAdvCells();
 }
-
+function deleteSelectedTable() {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  
+  // Trova la tabella più vicina al cursore
+  let node = range.startContainer;
+  while (node && node.nodeName !== 'TABLE') {
+    node = node.parentNode;
+  }
+  
+  if (node && node.nodeName === 'TABLE') {
+    node.remove();
+    updateOutput();
+  } else {
+    alert("Seleziona una tabella per eliminarla.");
+  }
+}
 function changeCellHeight(delta){
   const input=document.getElementById('advHeight');
   let value=parseInt(input.value);
