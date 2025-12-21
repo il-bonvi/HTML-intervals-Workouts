@@ -15,9 +15,37 @@ h2 { margin-bottom: 10px; }
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  position: relative;
+  position: relative; 
 }
 .toolbar button {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+/* Bottone Colore */
+#colorBtn {
+  background: linear-gradient(45deg, #F44336, #FFC107, #2196F3);
+  color: #000000;
+  font-weight: bold;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+.color-menu .color-item {
+  padding: 4px 6px;      
+  border-radius: 3px;    
+  border: none;          
+  font-size: 12px;
+  background: transparent;
+}
+/* Bottone Reset Colore */
+button[onclick="resetColor()"] {
+  background: #000000;
+  color: #000000;
+  border-radius: 6px;
+  border: 1px solid #ccc;
   padding: 5px 8px;
   cursor: pointer;
 }
@@ -68,8 +96,6 @@ h2 { margin-bottom: 10px; }
   border: 1px solid #ccc;
   padding: 8px;
   width: 200px;
-  max-height: 380px;
-  overflow-y: auto;
   box-shadow: 0 4px 12px rgba(0,0,0,.15);
   z-index: 100;
 }
@@ -114,34 +140,39 @@ h2 { margin-bottom: 10px; }
 .bg-brown { background: #795548; }
 .bg-blue-grey { background: #607D8B; }
 .bg-grey { background: #9E9E9E; }
+
+/* ==================== MODALE SUPER AVANZATA ==================== */
+#advancedTableModal {
+  display:none; 
+  position:fixed; top:10%; left:50%; transform:translateX(-50%);
+  background:#fff; border:1px solid #ccc; padding:20px; z-index:1000; 
+  max-height:80vh; overflow:auto; width:fit-content;
+}
+#advPreview table td { cursor:pointer; text-align:center; vertical-align:middle; }
+.advColorMenu { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:10px; }
+.advColorMenu button { width:24px; height:24px; border:1px solid #ccc; cursor:pointer; padding:0; }
 </style>
 </head>
 
 <body>
 
-<h2>Editor Workout – 19 Colori Base</h2>
+<h2>Editor Workout</h2>
 
 <div class="toolbar">
-
   <button onclick="execCmd('bold')"><b>B</b></button>
   <button onclick="execCmd('italic')"><i>I</i></button>
   <button onclick="execCmd('underline')"><u>U</u></button>
-
-  <!-- COLOR MENU BUTTON -->
   <button id="colorBtn" type="button">🎨 Colore</button>
-
+  <button onclick="resetColor()">---</button>
   <button onclick="execCmd('insertUnorderedList')">• Elenco</button>
   <button onclick="execCmd('insertOrderedList')">1. Elenco</button>
   <button onclick="execCmd('justifyLeft')">SX</button>
   <button onclick="execCmd('justifyCenter')">Centro</button>
   <button onclick="execCmd('justifyRight')">DX</button>
   <button onclick="execCmd('insertHorizontalRule')">Linea</button>
-  <button onclick="insertImage()">🖼️ Img</button>
-  <button onclick="insertTable()">📋 Tabella</button>
+  <button onclick="insertBasicTable()">📋 Tabella</button>
   <button onclick="clearEditor()">🧹 Pulisci</button>
-  <button onclick="resetColor()">🧹 Reset colore</button>
 
-  <!-- MENU COLORI -->
   <div id="colorMenu" class="color-menu hidden">
     <button class="color-item" data-class="text-red"><span>Red</span><span class="swatch bg-red"></span></button>
     <button class="color-item" data-class="text-pink"><span>Pink</span><span class="swatch bg-pink"></span></button>
@@ -163,14 +194,10 @@ h2 { margin-bottom: 10px; }
     <button class="color-item" data-class="text-blue-grey"><span>Blue Grey</span><span class="swatch bg-blue-grey"></span></button>
     <button class="color-item" data-class="text-grey"><span>Grey</span><span class="swatch bg-grey"></span></button>
   </div>
-
 </div>
 
-<!-- Casella di testo -->
 <div id="editor" contenteditable="true" oninput="updateOutput()">
-<br><br><br><br><br><br><b>
-_________________________________________________________________________________________________________
-</b>
+<br><br><br><br><br><br><b><hr></b>
 </div>
 
 <h3>💾 Codice HTML generato</h3>
@@ -178,132 +205,34 @@ ________________________________________________________________________________
 <button onclick="copyHTML()">📋 Copia HTML</button>
 
 <script>
-function execCmd(cmd) {
-  document.execCommand(cmd,false,null);
-  updateOutput();
-}
+/* ==================== FUNZIONI BASE ==================== */
+function execCmd(cmd) { document.execCommand(cmd,false,null); updateOutput(); }
+function clearEditor(){ document.getElementById("editor").innerHTML=""; updateOutput(); }
+function copyHTML(){ const t=document.getElementById("html-output"); t.select(); document.execCommand("copy"); alert("HTML copiato!"); }
+function resetColor() { const sel = window.getSelection(); if (!sel.rangeCount) return; const range = sel.getRangeAt(0); if (range.collapsed) return; const fragment = range.extractContents(); function removeTextClasses(node){ if(node.nodeType===1){ node.className=node.className.split(" ").filter(c=>!c.startsWith("text-")).join(" "); Array.from(node.childNodes).forEach(removeTextClasses); } } Array.from(fragment.childNodes).forEach(removeTextClasses); range.insertNode(fragment); updateOutput(); }
+function applyColorClass(colorClass) { const sel = window.getSelection(); if (!sel.rangeCount) return; const range = sel.getRangeAt(0); if (range.collapsed) return; const startContainer = range.startContainer; const endContainer = range.endContainer; function splitTextNode(node, offset, atEnd=false){ if(node.nodeType!==3) return node; if(offset===0&&!atEnd) return node; if(offset===node.length&&atEnd) return node; const newNode = atEnd? node.splitText(offset): node.splitText(offset); return newNode; } splitTextNode(startContainer, range.startOffset); splitTextNode(endContainer, range.endOffset, true); const fragment = range.extractContents(); function applyColorRecursively(node){ if(node.nodeType===3) return; if(node.nodeType===1){ node.className=node.className.split(" ").filter(c=>!c.startsWith("text-")).join(" "); Array.from(node.childNodes).forEach(applyColorRecursively); } } Array.from(fragment.childNodes).forEach(applyColorRecursively); const wrapper=document.createElement("span"); wrapper.classList.add(colorClass); wrapper.appendChild(fragment); range.insertNode(wrapper); sel.removeAllRanges(); const newRange=document.createRange(); newRange.selectNodeContents(wrapper); sel.addRange(newRange); updateOutput(); }
+const colorBtn=document.getElementById("colorBtn"); const colorMenu=document.getElementById("colorMenu"); colorBtn.onclick=()=> colorMenu.classList.toggle("hidden"); document.querySelectorAll(".color-item").forEach(btn=>{ btn.onclick=()=>{ applyColorClass(btn.dataset.class); colorMenu.classList.add("hidden"); } });
+function updateOutput(){ document.getElementById("html-output").value=document.getElementById("editor").innerHTML; }
 
-function insertImage(){
-  const url=prompt("URL immagine:");
-  if(url) document.execCommand("insertImage", false, url);
-  updateOutput();
-}
+/* ==================== FUNZIONI TABELLA BASE ==================== */
+function insertBasicTable() {
+  const rows = parseInt(prompt("Numero righe:", "2"));
+  const cols = parseInt(prompt("Numero colonne:", "2"));
+  if (!rows || !cols) return;
 
-function insertTable(){
-  const r=prompt("Righe:",2);
-  const c=prompt("Colonne:",2);
-  if(!r||!c) return;
-  let html="<table border='1' style='border-collapse:collapse'>";
-  for(let i=0;i<r;i++){ html+="<tr>"; for(let j=0;j<c;j++) html+="<td>Cella</td>"; html+="</tr>"; }
-  html+="</table>";
-  document.execCommand("insertHTML",false,html);
-  updateOutput();
-}
-
-function clearEditor(){
-  document.getElementById("editor").innerHTML="";
-  updateOutput();
-}
-
-function copyHTML(){
-  const t=document.getElementById("html-output");
-  t.select();
-  document.execCommand("copy");
-  alert("HTML copiato!");
-}
-
-// ===== RESET COLORE =====
-function resetColor() {
-  const sel = window.getSelection();
-  if (!sel.rangeCount) return;
-  const range = sel.getRangeAt(0);
-  if (range.collapsed) return;
-
-  const fragment = range.extractContents();
-
-  function removeTextClasses(node) {
-    if(node.nodeType === 1){
-      node.className = node.className
-        .split(" ")
-        .filter(c => !c.startsWith("text-"))
-        .join(" ");
-      Array.from(node.childNodes).forEach(removeTextClasses);
+  let html = "<table border='1' style='border-collapse:collapse;width:100%'>";
+  for (let i = 0; i < rows; i++) {
+    html += "<tr>";
+    for (let j = 0; j < cols; j++) {
+      html += "<td style='padding:6px'>Cella</td>";
     }
+    html += "</tr>";
   }
+  html += "</table><br>";
 
-  Array.from(fragment.childNodes).forEach(removeTextClasses);
-
-  range.insertNode(fragment);
+  document.execCommand("insertHTML", false, html);
   updateOutput();
-}
-
-// ===== COLOR CLASS APPLY =====
-function applyColorClass(colorClass) {
-  const sel = window.getSelection();
-  if (!sel.rangeCount) return;
-  const range = sel.getRangeAt(0);
-  if (range.collapsed) return;
-
-  const startContainer = range.startContainer;
-  const endContainer = range.endContainer;
-
-  function splitTextNode(node, offset, atEnd=false) {
-    if (node.nodeType !== 3) return node;
-    if (offset === 0 && !atEnd) return node;
-    if (offset === node.length && atEnd) return node;
-    const newNode = atEnd ? node.splitText(offset) : node.splitText(offset);
-    return newNode;
-  }
-
-  splitTextNode(startContainer, range.startOffset);
-  splitTextNode(endContainer, range.endOffset, true);
-
-  const fragment = range.extractContents();
-
-  function applyColorRecursively(node) {
-    if (node.nodeType === 3) return;
-    if (node.nodeType === 1) {
-      node.className = node.className
-        .split(" ")
-        .filter(c => !c.startsWith("text-"))
-        .join(" ");
-      Array.from(node.childNodes).forEach(applyColorRecursively);
-    }
-  }
-
-  Array.from(fragment.childNodes).forEach(applyColorRecursively);
-
-  const wrapper = document.createElement("span");
-  wrapper.classList.add(colorClass);
-  wrapper.appendChild(fragment);
-
-  range.insertNode(wrapper);
-
-  sel.removeAllRanges();
-  const newRange = document.createRange();
-  newRange.selectNodeContents(wrapper);
-  sel.addRange(newRange);
-
-  updateOutput();
-}
-
-// ===== MENU COLORI =====
-const colorBtn=document.getElementById("colorBtn");
-const colorMenu=document.getElementById("colorMenu");
-
-colorBtn.onclick=()=> colorMenu.classList.toggle("hidden");
-
-document.querySelectorAll(".color-item").forEach(btn=>{
-  btn.onclick=()=>{
-    applyColorClass(btn.dataset.class);
-    colorMenu.classList.add("hidden");
-  }
-});
-
-function updateOutput(){
-  document.getElementById("html-output").value=document.getElementById("editor").innerHTML;
 }
 </script>
-
 </body>
 </html>
