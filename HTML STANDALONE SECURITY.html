@@ -128,6 +128,18 @@ h2 { margin-bottom: 10px; }
   <button onclick="execCmd('italic')"><i>I</i></button>
   <button onclick="execCmd('underline')"><u>U</u></button>
 
+  <!-- FONT FAMILY -->
+<select onchange="execCmdWithArg('fontName', this.value)">
+  <option value="">Font</option>
+  <option value="Arial, sans-serif">Arial</option>
+  <option value="'Times New Roman', serif">Times New Roman</option>
+  <option value="'Courier New', monospace">Courier New</option>
+  <option value="Verdana, sans-serif">Verdana</option>
+  <option value="Georgia, serif">Georgia</option>
+  <option value="Tahoma, sans-serif">Tahoma</option>
+  <option value="'Lucida Console', monospace">Lucida Console</option>
+</select>
+
   <!-- FONT SIZE -->
   <select onchange="execCmdWithArg('fontSize', this.value)">
     <option value="">Dimensione</option>
