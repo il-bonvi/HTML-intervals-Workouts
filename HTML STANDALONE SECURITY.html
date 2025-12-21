@@ -140,7 +140,6 @@ h2 { margin-bottom: 10px; }
   <button onclick="insertTable()">📋 Tabella</button>
   <button onclick="clearEditor()">🧹 Pulisci</button>
   <button onclick="resetColor()">🧹 Reset colore</button>
-  <button onclick="resetStyles()">🎯 Reset stili</button>
 
   <!-- MENU COLORI -->
   <div id="colorMenu" class="color-menu hidden">
@@ -211,21 +210,6 @@ function copyHTML(){
   t.select();
   document.execCommand("copy");
   alert("HTML copiato!");
-}
-
-// ===== RESET STILI =====
-function resetStyles(){
-  const sel = window.getSelection();
-  if(!sel.rangeCount) return;
-  const range = sel.getRangeAt(0);
-  if(range.collapsed) return;
-
-  const span = document.createElement("span");
-  span.appendChild(range.extractContents());
-  span.removeAttribute("class");
-  span.removeAttribute("style");
-  range.insertNode(span);
-  updateOutput();
 }
 
 // ===== RESET COLORE =====
