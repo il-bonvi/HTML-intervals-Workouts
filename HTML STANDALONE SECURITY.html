@@ -20,7 +20,29 @@ h2 { margin-bottom: 10px; }
 .toolbar button {
   padding: 5px 8px;
   cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #eee;
+  transition: background 0.2s;
 }
+.toolbar button:hover {
+  background: #ddd;
+}
+
+/* Bottone Colore */
+#colorBtn {
+  background: linear-gradient(45deg, #F44336, #FFC107, #2196F3);
+  color: #fff;
+  font-weight: bold;
+}
+
+/* Bottone Reset Colore */
+button[onclick="resetColor()"] {
+  background: #000000; /* Blue Grey */
+  color: #000000;
+  font-weight: bold;
+}
+
 #editor {
   border: 1px solid #ccc;
   padding: 10px;
@@ -126,10 +148,8 @@ h2 { margin-bottom: 10px; }
   <button onclick="execCmd('bold')"><b>B</b></button>
   <button onclick="execCmd('italic')"><i>I</i></button>
   <button onclick="execCmd('underline')"><u>U</u></button>
-
-  <!-- COLOR MENU BUTTON -->
   <button id="colorBtn" type="button">🎨 Colore</button>
-
+  <button onclick="resetColor()">--</button>
   <button onclick="execCmd('insertUnorderedList')">• Elenco</button>
   <button onclick="execCmd('insertOrderedList')">1. Elenco</button>
   <button onclick="execCmd('justifyLeft')">SX</button>
@@ -139,7 +159,6 @@ h2 { margin-bottom: 10px; }
   <button onclick="insertImage()">🖼️ Img</button>
   <button onclick="insertTable()">📋 Tabella</button>
   <button onclick="clearEditor()">🧹 Pulisci</button>
-  <button onclick="resetColor()">🧹 Reset colore</button>
 
   <!-- MENU COLORI -->
   <div id="colorMenu" class="color-menu hidden">
