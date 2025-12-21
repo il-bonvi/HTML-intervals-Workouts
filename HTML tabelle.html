@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Editor Workout – Palette 19 Colori Base</title>
+<style>
+body {
+  font-family: sans-serif;
+  margin: 20px;
+  background: #f8f8f8;
+}
+h2 { margin-bottom: 10px; }
+.toolbar {
+  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  position: relative; 
+}
+.toolbar button {
+  padding: 5px 8px;
+  cursor: pointer;
+}
+/* Bottone Colore */
+#colorBtn {
+  background: linear-gradient(45deg, #F44336, #FFC107, #2196F3);
+  color: #000000;
+  font-weight: bold;
+  border-radius: 6px;   /* smussa gli angoli */
+  border: 1px solid #ccc; /* cambia colore del bordo */
+  padding: 5px 8px;     /* grandezza bottone */
+  cursor: pointer;
+}
+/* Bottone Reset Colore */
+button[onclick="resetColor()"] {
+  background: #000000; /* Blue Grey */
+  color: #000000;
+  border-radius: 6px;   /* smussa gli angoli */
+  border: 1px solid #ccc; /* cambia colore del bordo */
+  padding: 5px 8px;     /* grandezza bottone */
+  cursor: pointer;
+}
+#editor {
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 300px;
+  background: #fff;
+}
+#html-output {
+  width: 100%;
+  height: 200px;
+  margin-top: 20px;
+  font-family: monospace;
+}
+
+/* =========================
+   TEXT COLOR CLASSES
+   ========================= */
+.text-red { color: #F44336; }
+.text-pink { color: #E91E63; }
+.text-purple { color: #9C27B0; }
+.text-deep-purple { color: #673AB7; }
+.text-indigo { color: #3F51B5; }
+.text-blue { color: #2196F3; }
+.text-light-blue { color: #03A9F4; }
+.text-cyan { color: #00BCD4; }
+.text-teal { color: #009688; }
+.text-green { color: #4CAF50; }
+.text-light-green { color: #8BC34A; }
+.text-lime { color: #CDDC39; }
+.text-yellow { color: #FFEB3B; }
+.text-amber { color: #FFC107; }
+.text-orange { color: #FF9800; }
+.text-deep-orange { color: #FF5722; }
+.text-brown { color: #795548; }
+.text-blue-grey { color: #607D8B; }
+.text-grey { color: #9E9E9E; }
+
+/* =========================
+   COLOR MENU
+   ========================= */
+.color-menu {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 8px;
+  width: 200px;
+  max-height: 380px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  z-index: 100;
+}
+.hidden { display: none; }
+.color-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.color-item:hover { background: #f2f2f2; }
+.swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,0,0,.2);
+  flex-shrink: 0;
+}
+
+/* BG swatches */
+.bg-red { background: #F44336; }
+.bg-pink { background: #E91E63; }
+.bg-purple { background: #9C27B0; }
+.bg-deep-purple { background: #673AB7; }
+.bg-indigo { background: #3F51B5; }
+.bg-blue { background: #2196F3; }
+.bg-light-blue { background: #03A9F4; }
+.bg-cyan { background: #00BCD4; }
+.bg-teal { background: #009688; }
+.bg-green { background: #4CAF50; }
+.bg-light-green { background: #8BC34A; }
+.bg-lime { background: #CDDC39; }
+.bg-yellow { background: #FFEB3B; }
+.bg-amber { background: #FFC107; }
+.bg-orange { background: #FF9800; }
+.bg-deep-orange { background: #FF5722; }
+.bg-brown { background: #795548; }
+.bg-blue-grey { background: #607D8B; }
+.bg-grey { background: #9E9E9E; }
+</style>
+</head>
+
+<body>
+
+<h2>Editor Workout – 19 Colori Base</h2>
+
+<div class="toolbar">
+
+  <button onclick="execCmd('bold')"><b>B</b></button>
+  <button onclick="execCmd('italic')"><i>I</i></button>
+  <button onclick="execCmd('underline')"><u>U</u></button>
+  <button id="colorBtn" type="button">🎨 Colore</button>
+  <button onclick="resetColor()">---</button>
+  <button onclick="execCmd('insertUnorderedList')">• Elenco</button>
+  <button onclick="execCmd('insertOrderedList')">1. Elenco</button>
+  <button onclick="execCmd('justifyLeft')">SX</button>
+  <button onclick="execCmd('justifyCenter')">Centro</button>
+  <button onclick="execCmd('justifyRight')">DX</button>
+  <button onclick="execCmd('insertHorizontalRule')">Linea</button>
+  <button onclick="insertTable()">📋 Tabella</button>
+  <button onclick="clearEditor()">🧹 Pulisci</button>
+
+  <!-- MENU COLORI -->
+  <div id="colorMenu" class="color-menu hidden">
+    <button class="color-item" data-class="text-red"><span>Red</span><span class="swatch bg-red"></span></button>
+    <button class="color-item" data-class="text-pink"><span>Pink</span><span class="swatch bg-pink"></span></button>
+    <button class="color-item" data-class="text-purple"><span>Purple</span><span class="swatch bg-purple"></span></button>
+    <button class="color-item" data-class="text-deep-purple"><span>Deep Purple</span><span class="swatch bg-deep-purple"></span></button>
+    <button class="color-item" data-class="text-indigo"><span>Indigo</span><span class="swatch bg-indigo"></span></button>
+    <button class="color-item" data-class="text-blue"><span>Blue</span><span class="swatch bg-blue"></span></button>
+    <button class="color-item" data-class="text-light-blue"><span>Light Blue</span><span class="swatch bg-light-blue"></span></button>
+    <button class="color-item" data-class="text-cyan"><span>Cyan</span><span class="swatch bg-cyan"></span></button>
+    <button class="color-item" data-class="text-teal"><span>Teal</span><span class="swatch bg-teal"></span></button>
+    <button class="color-item" data-class="text-green"><span>Green</span><span class="swatch bg-green"></span></button>
+    <button class="color-item" data-class="text-light-green"><span>Light Green</span><span class="swatch bg-light-green"></span></button>
+    <button class="color-item" data-class="text-lime"><span>Lime</span><span class="swatch bg-lime"></span></button>
+    <button class="color-item" data-class="text-yellow"><span>Yellow</span><span class="swatch bg-yellow"></span></button>
+    <button class="color-item" data-class="text-amber"><span>Amber</span><span class="swatch bg-amber"></span></button>
+    <button class="color-item" data-class="text-orange"><span>Orange</span><span class="swatch bg-orange"></span></button>
+    <button class="color-item" data-class="text-deep-orange"><span>Deep Orange</span><span class="swatch bg-deep-orange"></span></button>
+    <button class="color-item" data-class="text-brown"><span>Brown</span><span class="swatch bg-brown"></span></button>
+    <button class="color-item" data-class="text-blue-grey"><span>Blue Grey</span><span class="swatch bg-blue-grey"></span></button>
+    <button class="color-item" data-class="text-grey"><span>Grey</span><span class="swatch bg-grey"></span></button>
+  </div>
+
+</div>
+
+<!-- Casella di testo -->
+<div id="editor" contenteditable="true" oninput="updateOutput()">
+<br><br><br><br><br><br><b>
+_________________________________________________________________________________________________________
+</b>
+</div>
+
+<h3>💾 Codice HTML generato</h3>
+<textarea id="html-output" readonly></textarea><br>
+<button onclick="copyHTML()">📋 Copia HTML</button>
+
+<script>
+function execCmd(cmd) {
+  document.execCommand(cmd,false,null);
+  updateOutput();
+}
+
+function insertTable(){
+  const r=prompt("Righe:",2);
+  const c=prompt("Colonne:",2);
+  if(!r||!c) return;
+  let html="<table border='1' style='border-collapse:collapse'>";
+  for(let i=0;i<r;i++){ html+="<tr>"; for(let j=0;j<c;j++) html+="<td>Cella</td>"; html+="</tr>"; }
+  html+="</table>";
+  document.execCommand("insertHTML",false,html);
+  updateOutput();
+}
+
+function clearEditor(){
+  document.getElementById("editor").innerHTML="";
+  updateOutput();
+}
+
+function copyHTML(){
+  const t=document.getElementById("html-output");
+  t.select();
+  document.execCommand("copy");
+  alert("HTML copiato!");
+}
+
+// ===== RESET COLORE =====
+function resetColor() {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) return;
+
+  const fragment = range.extractContents();
+
+  function removeTextClasses(node) {
+    if(node.nodeType === 1){
+      node.className = node.className
+        .split(" ")
+        .filter(c => !c.startsWith("text-"))
+        .join(" ");
+      Array.from(node.childNodes).forEach(removeTextClasses);
+    }
+  }
+
+  Array.from(fragment.childNodes).forEach(removeTextClasses);
+
+  range.insertNode(fragment);
+  updateOutput();
+}
+
+// ===== COLOR CLASS APPLY =====
+function applyColorClass(colorClass) {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) return;
+
+  const startContainer = range.startContainer;
+  const endContainer = range.endContainer;
+
+  function splitTextNode(node, offset, atEnd=false) {
+    if (node.nodeType !== 3) return node;
+    if (offset === 0 && !atEnd) return node;
+    if (offset === node.length && atEnd) return node;
+    const newNode = atEnd ? node.splitText(offset) : node.splitText(offset);
+    return newNode;
+  }
+
+  splitTextNode(startContainer, range.startOffset);
+  splitTextNode(endContainer, range.endOffset, true);
+
+  const fragment = range.extractContents();
+
+  function applyColorRecursively(node) {
+    if (node.nodeType === 3) return;
+    if (node.nodeType === 1) {
+      node.className = node.className
+        .split(" ")
+        .filter(c => !c.startsWith("text-"))
+        .join(" ");
+      Array.from(node.childNodes).forEach(applyColorRecursively);
+    }
+  }
+
+  Array.from(fragment.childNodes).forEach(applyColorRecursively);
+
+  const wrapper = document.createElement("span");
+  wrapper.classList.add(colorClass);
+  wrapper.appendChild(fragment);
+
+  range.insertNode(wrapper);
+
+  sel.removeAllRanges();
+  const newRange = document.createRange();
+  newRange.selectNodeContents(wrapper);
+  sel.addRange(newRange);
+
+  updateOutput();
+}
+
+// ===== MENU COLORI =====
+const colorBtn=document.getElementById("colorBtn");
+const colorMenu=document.getElementById("colorMenu");
+
+colorBtn.onclick=()=> colorMenu.classList.toggle("hidden");
+
+document.querySelectorAll(".color-item").forEach(btn=>{
+  btn.onclick=()=>{
+    applyColorClass(btn.dataset.class);
+    colorMenu.classList.add("hidden");
+  }
+});
+
+function updateOutput(){
+  document.getElementById("html-output").value=document.getElementById("editor").innerHTML;
+}
+</script>
+
+</body>
+</html>
