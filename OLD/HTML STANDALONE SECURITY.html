@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Editor HTML Avanzato (Class-based Colors)</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      background: #f8f8f8;
+    }
+    .toolbar {
+      margin-bottom: 10px;
+    }
+    .toolbar select, .toolbar button {
+      margin-right: 5px;
+      padding: 5px;
+    }
+    #editor {
+      border: 1px solid #ccc;
+      padding: 10px;
+      min-height: 300px;
+      background: #fff;
+    }
+    #html-output {
+      width: 100%;
+      height: 200px;
+      margin-top: 20px;
+      font-family: monospace;
+    }
+
+    /* === COLOR CLASSES (copiabili dal tuo file SCSS compilato) === */
+    .text-red { color: #e53935; }
+    .text-orange { color: #fb8c00; }
+    .text-yellow { color: #fdd835; }
+    .text-green { color: #43a047; }
+    .text-blue { color: #1e88e5; }
+    .text-purple { color: #8e24aa; }
+    .text-black { color: #000; }
+    .text-gray { color: #757575; }
+    .text-white { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <h2>Editor HTML Avanzato – Class-based Colors</h2>
+
+  <div class="toolbar">
+    <button onclick="execCmd('bold')"><b>B</b></button>
+    <button onclick="execCmd('italic')"><i>I</i></button>
+    <button onclick="execCmd('underline')"><u>U</u></button>
+
+    <!-- === NUOVO SELETTORE COLORI === -->
+    <select onchange="applyColorClass(this.value)">
+      <option value="">Colore testo</option>
+      <option value="text-red">Rosso</option>
+      <option value="text-orange">Arancione</option>
+      <option value="text-yellow">Giallo</option>
+      <option value="text-green">Verde</option>
+      <option value="text-blue">Blu</option>
+      <option value="text-purple">Viola</option>
+      <option value="text-black">Nero</option>
+      <option value="text-gray">Grigio</option>
+      <option value="text-white">Bianco</option>
+    </select>
+
+    <select onchange="execCmdWithArg('formatBlock', this.value)">
+      <option value="">Titolo</option>
+      <option value="h1">H1</option>
+      <option value="h2">H2</option>
+      <option value="h3">H3</option>
+      <option value="p">Paragrafo</option>
+    </select>
+
+    <select onchange="execCmdWithArg('fontSize', this.value)">
+      <option value="">Dimensione</option>
+      <option value="1">10px</option>
+      <option value="2">13px</option>
+      <option value="3">16px</option>
+      <option value="4">18px</option>
+      <option value="5">24px</option>
+      <option value="6">32px</option>
+    </select>
+
+    <button onclick="execCmd('insertUnorderedList')">• Elenco</button>
+    <button onclick="execCmd('insertOrderedList')">1. Elenco</button>
+    <button onclick="execCmd('justifyLeft')">SX</button>
+    <button onclick="execCmd('justifyCenter')">Centro</button>
+    <button onclick="execCmd('justifyRight')">DX</button>
+    <button onclick="execCmd('insertHorizontalRule')">Linea</button>
+    <button onclick="insertImage()">🖼️ Img</button>
+    <button onclick="insertTable()">📋 Tabella</button>
+    <button onclick="clearEditor()">🧹 Pulisci</button>
+  </div>
+
+  <div id="editor" contenteditable="true" oninput="updateOutput()">
+    Scrivi qui il tuo workout...
+  </div>
+
+  <h3>💾 Codice HTML generato:</h3>
+  <textarea id="html-output" readonly></textarea><br>
+  <button onclick="copyHTML()">📋 Copia codice HTML</button>
+
+  <script>
+    function execCmd(command) {
+      document.execCommand(command, false, null);
+      updateOutput();
+    }
+
+    function execCmdWithArg(command, arg) {
+      document.execCommand(command, false, arg);
+      updateOutput();
+    }
+
+    // === NUOVA FUNZIONE PER APPLICARE CLASSI COLORE ===
+    function applyColorClass(colorClass) {
+      if (!colorClass) return;
+
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+
+      const range = selection.getRangeAt(0);
+      const span = document.createElement("span");
+
+      // rimuove eventuali vecchie classi colore
+      span.className =
+        colorClass;
+
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+
+      updateOutput();
+    }
+
+    function insertImage() {
+      const url = prompt("URL dell'immagine:");
+      if (url) {
+        document.execCommand("insertImage", false, url);
+        updateOutput();
+      }
+    }
+
+    function insertTable() {
+      const rows = prompt("Numero righe:", 2);
+      const cols = prompt("Numero colonne:", 2);
+      if (rows && cols) {
+        let table = "<table border='1' style='border-collapse: collapse;'>";
+        for (let i = 0; i < rows; i++) {
+          table += "<tr>";
+          for (let j = 0; j < cols; j++) {
+            table += "<td style='padding:5px;'>Cella</td>";
+          }
+          table += "</tr>";
+        }
+        table += "</table>";
+        document.execCommand("insertHTML", false, table);
+        updateOutput();
+      }
+    }
+
+    function clearEditor() {
+      document.getElementById("editor").innerHTML = "";
+      updateOutput();
+    }
+
+    function updateOutput() {
+      document.getElementById("html-output").value =
+        document.getElementById("editor").innerHTML;
+    }
+
+    function copyHTML() {
+      const output = document.getElementById("html-output");
+      output.select();
+      document.execCommand("copy");
+      alert("Codice HTML copiato!");
+    }
+  </script>
+
+</body>
+</html>
