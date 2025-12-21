@@ -153,7 +153,6 @@ button[onclick="resetColor()"] {
   <button onclick="execCmd('justifyCenter')">Centro</button>
   <button onclick="execCmd('justifyRight')">DX</button>
   <button onclick="execCmd('insertHorizontalRule')">Linea</button>
-  <button onclick="insertImage()">🖼️ Img</button>
   <button onclick="insertTable()">📋 Tabella</button>
   <button onclick="clearEditor()">🧹 Pulisci</button>
 
@@ -196,12 +195,6 @@ ________________________________________________________________________________
 <script>
 function execCmd(cmd) {
   document.execCommand(cmd,false,null);
-  updateOutput();
-}
-
-function insertImage(){
-  const url=prompt("URL immagine:");
-  if(url) document.execCommand("insertImage", false, url);
   updateOutput();
 }
 
