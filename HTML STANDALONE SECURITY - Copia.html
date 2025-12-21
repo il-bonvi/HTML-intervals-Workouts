@@ -17,7 +17,7 @@ h2 { margin-bottom: 10px; }
   gap: 4px;
   position: relative;
 }
-.toolbar button, .toolbar select {
+.toolbar button {
   padding: 5px 8px;
   cursor: pointer;
 }
@@ -127,29 +127,6 @@ h2 { margin-bottom: 10px; }
   <button onclick="execCmd('italic')"><i>I</i></button>
   <button onclick="execCmd('underline')"><u>U</u></button>
 
-  <!-- FONT FAMILY -->
-  <select onchange="execCmdWithArg('fontName', this.value)">
-    <option value="">Font</option>
-    <option value="Arial, sans-serif">Arial</option>
-    <option value="'Times New Roman', serif">Times New Roman</option>
-    <option value="'Courier New', monospace">Courier New</option>
-    <option value="Verdana, sans-serif">Verdana</option>
-    <option value="Georgia, serif">Georgia</option>
-    <option value="Tahoma, sans-serif">Tahoma</option>
-    <option value="'Lucida Console', monospace">Lucida Console</option>
-  </select>
-
-  <!-- FONT SIZE -->
-  <select onchange="execCmdWithArg('fontSize', this.value)">
-    <option value="">Dimensione</option>
-    <option value="1">10px</option>
-    <option value="2">13px</option>
-    <option value="3">16px</option>
-    <option value="4">18px</option>
-    <option value="5">24px</option>
-    <option value="6">32px</option>
-  </select>
-
   <!-- COLOR MENU BUTTON -->
   <button id="colorBtn" type="button">🎨 Colore</button>
 
@@ -204,11 +181,6 @@ ________________________________________________________________________________
 <script>
 function execCmd(cmd) {
   document.execCommand(cmd,false,null);
-  updateOutput();
-}
-
-function execCmdWithArg(cmd,arg){
-  document.execCommand(cmd,false,arg);
   updateOutput();
 }
 
