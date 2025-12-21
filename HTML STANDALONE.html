@@ -15,34 +15,31 @@ h2 { margin-bottom: 10px; }
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  position: relative;
+  position: relative; 
 }
 .toolbar button {
   padding: 5px 8px;
   cursor: pointer;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #eee;
-  transition: background 0.2s;
 }
-.toolbar button:hover {
-  background: #ddd;
-}
-
 /* Bottone Colore */
 #colorBtn {
   background: linear-gradient(45deg, #F44336, #FFC107, #2196F3);
-  color: #fff;
+  color: #000000;
   font-weight: bold;
+  border-radius: 6px;   /* smussa gli angoli */
+  border: 1px solid #ccc; /* cambia colore del bordo */
+  padding: 5px 8px;     /* grandezza bottone */
+  cursor: pointer;
 }
-
 /* Bottone Reset Colore */
 button[onclick="resetColor()"] {
   background: #000000; /* Blue Grey */
   color: #000000;
-  font-weight: bold;
+  border-radius: 6px;   /* smussa gli angoli */
+  border: 1px solid #ccc; /* cambia colore del bordo */
+  padding: 5px 8px;     /* grandezza bottone */
+  cursor: pointer;
 }
-
 #editor {
   border: 1px solid #ccc;
   padding: 10px;
@@ -149,7 +146,7 @@ button[onclick="resetColor()"] {
   <button onclick="execCmd('italic')"><i>I</i></button>
   <button onclick="execCmd('underline')"><u>U</u></button>
   <button id="colorBtn" type="button">🎨 Colore</button>
-  <button onclick="resetColor()">--</button>
+  <button onclick="resetColor()">---</button>
   <button onclick="execCmd('insertUnorderedList')">• Elenco</button>
   <button onclick="execCmd('insertOrderedList')">1. Elenco</button>
   <button onclick="execCmd('justifyLeft')">SX</button>
