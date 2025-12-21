@@ -114,7 +114,6 @@ h2 { margin-bottom: 10px; }
 .bg-brown { background: #795548; }
 .bg-blue-grey { background: #607D8B; }
 .bg-grey { background: #9E9E9E; }
-
 </style>
 </head>
 
@@ -129,16 +128,16 @@ h2 { margin-bottom: 10px; }
   <button onclick="execCmd('underline')"><u>U</u></button>
 
   <!-- FONT FAMILY -->
-<select onchange="execCmdWithArg('fontName', this.value)">
-  <option value="">Font</option>
-  <option value="Arial, sans-serif">Arial</option>
-  <option value="'Times New Roman', serif">Times New Roman</option>
-  <option value="'Courier New', monospace">Courier New</option>
-  <option value="Verdana, sans-serif">Verdana</option>
-  <option value="Georgia, serif">Georgia</option>
-  <option value="Tahoma, sans-serif">Tahoma</option>
-  <option value="'Lucida Console', monospace">Lucida Console</option>
-</select>
+  <select onchange="execCmdWithArg('fontName', this.value)">
+    <option value="">Font</option>
+    <option value="Arial, sans-serif">Arial</option>
+    <option value="'Times New Roman', serif">Times New Roman</option>
+    <option value="'Courier New', monospace">Courier New</option>
+    <option value="Verdana, sans-serif">Verdana</option>
+    <option value="Georgia, serif">Georgia</option>
+    <option value="Tahoma, sans-serif">Tahoma</option>
+    <option value="'Lucida Console', monospace">Lucida Console</option>
+  </select>
 
   <!-- FONT SIZE -->
   <select onchange="execCmdWithArg('fontSize', this.value)">
@@ -163,6 +162,8 @@ h2 { margin-bottom: 10px; }
   <button onclick="insertImage()">🖼️ Img</button>
   <button onclick="insertTable()">📋 Tabella</button>
   <button onclick="clearEditor()">🧹 Pulisci</button>
+  <button onclick="resetColor()">🧹 Reset colore</button>
+  <button onclick="resetStyles()">🎯 Reset stili</button>
 
   <!-- MENU COLORI -->
   <div id="colorMenu" class="color-menu hidden">
@@ -189,9 +190,11 @@ h2 { margin-bottom: 10px; }
 
 </div>
 
+<!-- Casella di testo -->
 <div id="editor" contenteditable="true" oninput="updateOutput()">
-<br><br><br><br><br>
-<b>=====================================================================================</b>
+<br><br><br><br><br><br><b>
+____________________________________________________________________________________________
+</b>
 </div>
 
 <h3>💾 Codice HTML generato</h3>
@@ -231,10 +234,6 @@ function clearEditor(){
   updateOutput();
 }
 
-function updateOutput(){
-  document.getElementById("html-output").value=document.getElementById("editor").innerHTML;
-}
-
 function copyHTML(){
   const t=document.getElementById("html-output");
   t.select();
@@ -242,26 +241,93 @@ function copyHTML(){
   alert("HTML copiato!");
 }
 
-// ===== COLOR CLASS APPLY =====
-function applyColorClass(colorClass){
-  const sel=window.getSelection();
+// ===== RESET STILI =====
+function resetStyles(){
+  const sel = window.getSelection();
   if(!sel.rangeCount) return;
-  const range=sel.getRangeAt(0);
+  const range = sel.getRangeAt(0);
   if(range.collapsed) return;
 
-  let container=range.commonAncestorContainer;
-  if(container.nodeType===3) container=container.parentNode;
+  const span = document.createElement("span");
+  span.appendChild(range.extractContents());
+  span.removeAttribute("class");
+  span.removeAttribute("style");
+  range.insertNode(span);
+  updateOutput();
+}
 
-  let span;
-  if(container.tagName==="SPAN"){ span=container; }
-  else{
-    span=document.createElement("span");
-    span.appendChild(range.extractContents());
-    range.insertNode(span);
+// ===== RESET COLORE =====
+function resetColor() {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) return;
+
+  const fragment = range.extractContents();
+
+  function removeTextClasses(node) {
+    if(node.nodeType === 1){
+      node.className = node.className
+        .split(" ")
+        .filter(c => !c.startsWith("text-"))
+        .join(" ");
+      Array.from(node.childNodes).forEach(removeTextClasses);
+    }
   }
 
-  span.className=span.className.split(" ").filter(c=>!c.startsWith("text-")).join(" ");
-  span.classList.add(colorClass);
+  Array.from(fragment.childNodes).forEach(removeTextClasses);
+
+  range.insertNode(fragment);
+  updateOutput();
+}
+
+// ===== COLOR CLASS APPLY =====
+function applyColorClass(colorClass) {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) return;
+
+  const startContainer = range.startContainer;
+  const endContainer = range.endContainer;
+
+  function splitTextNode(node, offset, atEnd=false) {
+    if (node.nodeType !== 3) return node;
+    if (offset === 0 && !atEnd) return node;
+    if (offset === node.length && atEnd) return node;
+    const newNode = atEnd ? node.splitText(offset) : node.splitText(offset);
+    return newNode;
+  }
+
+  splitTextNode(startContainer, range.startOffset);
+  splitTextNode(endContainer, range.endOffset, true);
+
+  const fragment = range.extractContents();
+
+  function applyColorRecursively(node) {
+    if (node.nodeType === 3) return;
+    if (node.nodeType === 1) {
+      node.className = node.className
+        .split(" ")
+        .filter(c => !c.startsWith("text-"))
+        .join(" ");
+      Array.from(node.childNodes).forEach(applyColorRecursively);
+    }
+  }
+
+  Array.from(fragment.childNodes).forEach(applyColorRecursively);
+
+  const wrapper = document.createElement("span");
+  wrapper.classList.add(colorClass);
+  wrapper.appendChild(fragment);
+
+  range.insertNode(wrapper);
+
+  sel.removeAllRanges();
+  const newRange = document.createRange();
+  newRange.selectNodeContents(wrapper);
+  sel.addRange(newRange);
+
   updateOutput();
 }
 
@@ -277,6 +343,10 @@ document.querySelectorAll(".color-item").forEach(btn=>{
     colorMenu.classList.add("hidden");
   }
 });
+
+function updateOutput(){
+  document.getElementById("html-output").value=document.getElementById("editor").innerHTML;
+}
 </script>
 
 </body>
