@@ -26,18 +26,18 @@ h2 { margin-bottom: 10px; }
   background: linear-gradient(45deg, #F44336, #FFC107, #2196F3);
   color: #000000;
   font-weight: bold;
-  border-radius: 6px;   /* smussa gli angoli */
-  border: 1px solid #ccc; /* cambia colore del bordo */
-  padding: 5px 8px;     /* grandezza bottone */
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 5px 8px;
   cursor: pointer;
 }
 /* Bottone Reset Colore */
 button[onclick="resetColor()"] {
-  background: #000000; /* Blue Grey */
+  background: #000000;
   color: #000000;
-  border-radius: 6px;   /* smussa gli angoli */
-  border: 1px solid #ccc; /* cambia colore del bordo */
-  padding: 5px 8px;     /* grandezza bottone */
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 5px 8px;
   cursor: pointer;
 }
 #editor {
@@ -133,6 +133,17 @@ button[onclick="resetColor()"] {
 .bg-brown { background: #795548; }
 .bg-blue-grey { background: #607D8B; }
 .bg-grey { background: #9E9E9E; }
+
+/* ==================== MODALE SUPER AVANZATA ==================== */
+#advancedTableModal {
+  display:none; 
+  position:fixed; top:10%; left:50%; transform:translateX(-50%);
+  background:#fff; border:1px solid #ccc; padding:20px; z-index:1000; 
+  max-height:80vh; overflow:auto; width:fit-content;
+}
+#advPreview table td { cursor:pointer; text-align:center; vertical-align:middle; }
+.advColorMenu { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:10px; }
+.advColorMenu button { width:24px; height:24px; border:1px solid #ccc; cursor:pointer; padding:0; }
 </style>
 </head>
 
@@ -141,7 +152,6 @@ button[onclick="resetColor()"] {
 <h2>Editor Workout – 19 Colori Base</h2>
 
 <div class="toolbar">
-
   <button onclick="execCmd('bold')"><b>B</b></button>
   <button onclick="execCmd('italic')"><i>I</i></button>
   <button onclick="execCmd('underline')"><u>U</u></button>
@@ -155,8 +165,8 @@ button[onclick="resetColor()"] {
   <button onclick="execCmd('insertHorizontalRule')">Linea</button>
   <button onclick="insertTable()">📋 Tabella</button>
   <button onclick="clearEditor()">🧹 Pulisci</button>
+  <button onclick="openAdvancedTableModal()">📋 Tabella Super Avanzata</button>
 
-  <!-- MENU COLORI -->
   <div id="colorMenu" class="color-menu hidden">
     <button class="color-item" data-class="text-red"><span>Red</span><span class="swatch bg-red"></span></button>
     <button class="color-item" data-class="text-pink"><span>Pink</span><span class="swatch bg-pink"></span></button>
@@ -178,141 +188,162 @@ button[onclick="resetColor()"] {
     <button class="color-item" data-class="text-blue-grey"><span>Blue Grey</span><span class="swatch bg-blue-grey"></span></button>
     <button class="color-item" data-class="text-grey"><span>Grey</span><span class="swatch bg-grey"></span></button>
   </div>
-
 </div>
 
-<!-- Casella di testo -->
 <div id="editor" contenteditable="true" oninput="updateOutput()">
-<br><br><br><br><br><br><b>
-_________________________________________________________________________________________________________
-</b>
+<br><br><br><br><br><br><b>_________________________________________________________________________________________________________</b>
 </div>
 
 <h3>💾 Codice HTML generato</h3>
 <textarea id="html-output" readonly></textarea><br>
 <button onclick="copyHTML()">📋 Copia HTML</button>
 
+<!-- MODALE SUPER AVANZATA -->
+<div id="advancedTableModal">
+  <h3>Configura Tabella Super Avanzata</h3>
+  <label>Righe: <input type="number" id="advRows" value="2" min="1"></label>
+  <label>Colonne: <input type="number" id="advCols" value="2" min="1"></label><br><br>
+<label>Larghezza celle: 
+  <button type="button" onclick="changeCellWidth(-10)">−</button>
+  <input type="text" id="advWidth" value="100px">
+  <button type="button" onclick="changeCellWidth(10)">+</button>
+</label>
+
+<label>Altezza celle: 
+  <button type="button" onclick="changeCellHeight(-5)">−</button>
+  <input type="text" id="advHeight" value="50px">
+  <button type="button" onclick="changeCellHeight(5)">+</button>
+</label>
+<br><br>
+<label>Bordo: 
+  <button type="button" onclick="changeCellBorder(-1)">−</button>
+  <input type="text" id="advBorder" value="1px solid #000">
+  <button type="button" onclick="changeCellBorder(1)">+</button>
+</label>
+<br><br>
+  <div class="advColorMenu" id="cellColorMenu"></div>
+
+  <div style="margin-bottom:10px;">
+    <button onclick="advAddRow()">➕ Riga</button>
+    <button onclick="advAddCol()">➕ Colonna</button>
+    <button onclick="advDelRow()">❌ Riga</button>
+    <button onclick="advDelCol()">❌ Colonna</button>
+    <button onclick="copySelectedRows()">📄 Copia Righe</button>
+    <button onclick="pasteRows()">📋 Incolla Righe</button>
+    <button onclick="resetSelectedCellsColor()">♻️ Reset Colore Celle</button>
+  </div>
+  <p><i>Seleziona più celle trascinando il mouse. Poi clicca un colore per applicarlo alle celle selezionate.</i></p>
+  <div id="advPreview" style="border:1px solid #ccc; padding:5px; overflow:auto; user-select:none;"></div><br>
+  <button onclick="insertAdvTable()">Inserisci Tabella</button>
+  <button onclick="closeAdvancedTableModal()">Annulla</button>
+</div>
+
 <script>
-function execCmd(cmd) {
-  document.execCommand(cmd,false,null);
-  updateOutput();
-}
+/* ==================== FUNZIONI BASE ==================== */
+function execCmd(cmd) { document.execCommand(cmd,false,null); updateOutput(); }
+function insertTable(){ const r=prompt("Righe:",2); const c=prompt("Colonne:",2); if(!r||!c) return; let html="<table border='1' style='border-collapse:collapse'>"; for(let i=0;i<r;i++){ html+="<tr>"; for(let j=0;j<c;j++) html+="<td>Cella</td>"; html+="</tr>"; } html+="</table>"; document.execCommand("insertHTML",false,html); updateOutput(); }
+function clearEditor(){ document.getElementById("editor").innerHTML=""; updateOutput(); }
+function copyHTML(){ const t=document.getElementById("html-output"); t.select(); document.execCommand("copy"); alert("HTML copiato!"); }
+function resetColor() { const sel = window.getSelection(); if (!sel.rangeCount) return; const range = sel.getRangeAt(0); if (range.collapsed) return; const fragment = range.extractContents(); function removeTextClasses(node){ if(node.nodeType===1){ node.className=node.className.split(" ").filter(c=>!c.startsWith("text-")).join(" "); Array.from(node.childNodes).forEach(removeTextClasses); } } Array.from(fragment.childNodes).forEach(removeTextClasses); range.insertNode(fragment); updateOutput(); }
+function applyColorClass(colorClass) { const sel = window.getSelection(); if (!sel.rangeCount) return; const range = sel.getRangeAt(0); if (range.collapsed) return; const startContainer = range.startContainer; const endContainer = range.endContainer; function splitTextNode(node, offset, atEnd=false){ if(node.nodeType!==3) return node; if(offset===0&&!atEnd) return node; if(offset===node.length&&atEnd) return node; const newNode = atEnd? node.splitText(offset): node.splitText(offset); return newNode; } splitTextNode(startContainer, range.startOffset); splitTextNode(endContainer, range.endOffset, true); const fragment = range.extractContents(); function applyColorRecursively(node){ if(node.nodeType===3) return; if(node.nodeType===1){ node.className=node.className.split(" ").filter(c=>!c.startsWith("text-")).join(" "); Array.from(node.childNodes).forEach(applyColorRecursively); } } Array.from(fragment.childNodes).forEach(applyColorRecursively); const wrapper=document.createElement("span"); wrapper.classList.add(colorClass); wrapper.appendChild(fragment); range.insertNode(wrapper); sel.removeAllRanges(); const newRange=document.createRange(); newRange.selectNodeContents(wrapper); sel.addRange(newRange); updateOutput(); }
+const colorBtn=document.getElementById("colorBtn"); const colorMenu=document.getElementById("colorMenu"); colorBtn.onclick=()=> colorMenu.classList.toggle("hidden"); document.querySelectorAll(".color-item").forEach(btn=>{ btn.onclick=()=>{ applyColorClass(btn.dataset.class); colorMenu.classList.add("hidden"); } });
+function updateOutput(){ document.getElementById("html-output").value=document.getElementById("editor").innerHTML; }
 
-function insertTable(){
-  const r=prompt("Righe:",2);
-  const c=prompt("Colonne:",2);
-  if(!r||!c) return;
-  let html="<table border='1' style='border-collapse:collapse'>";
-  for(let i=0;i<r;i++){ html+="<tr>"; for(let j=0;j<c;j++) html+="<td>Cella</td>"; html+="</tr>"; }
-  html+="</table>";
-  document.execCommand("insertHTML",false,html);
-  updateOutput();
-}
+/* ==================== TABELLA SUPER AVANZATA ==================== */
+let selectedCells = new Set(); let advTable; let copiedRows = []; let isSelecting=false;
+function openAdvancedTableModal(){ document.getElementById('advancedTableModal').style.display='block'; initAdvTable(); }
+function closeAdvancedTableModal(){ document.getElementById('advancedTableModal').style.display='none'; }
 
-function clearEditor(){
-  document.getElementById("editor").innerHTML="";
-  updateOutput();
-}
-
-function copyHTML(){
-  const t=document.getElementById("html-output");
-  t.select();
-  document.execCommand("copy");
-  alert("HTML copiato!");
-}
-
-// ===== RESET COLORE =====
-function resetColor() {
-  const sel = window.getSelection();
-  if (!sel.rangeCount) return;
-  const range = sel.getRangeAt(0);
-  if (range.collapsed) return;
-
-  const fragment = range.extractContents();
-
-  function removeTextClasses(node) {
-    if(node.nodeType === 1){
-      node.className = node.className
-        .split(" ")
-        .filter(c => !c.startsWith("text-"))
-        .join(" ");
-      Array.from(node.childNodes).forEach(removeTextClasses);
+function initAdvTable(){
+  const rows=parseInt(document.getElementById('advRows').value);
+  const cols=parseInt(document.getElementById('advCols').value);
+  const width=document.getElementById('advWidth').value;
+  const height=document.getElementById('advHeight').value;
+  const border=document.getElementById('advBorder').value;
+  advTable=document.createElement('table'); advTable.style.borderCollapse='collapse';
+  for(let i=0;i<rows;i++){
+    const tr=document.createElement('tr');
+    for(let j=0;j<cols;j++){
+      const td=document.createElement('td');
+      td.contentEditable="true"; td.style.width=width; td.style.height=height; td.style.border=border;
+      td.style.background="#ffffff"; td.style.color="#000000"; td.textContent="Cella";
+      td.onclick=()=>{}; td.onmousedown=(e)=>startSelection(e,td); td.onmouseover=(e)=>continueSelection(e,td);
+      tr.appendChild(td);
     }
+    advTable.appendChild(tr);
   }
-
-  Array.from(fragment.childNodes).forEach(removeTextClasses);
-
-  range.insertNode(fragment);
-  updateOutput();
+  document.getElementById('advPreview').innerHTML=''; document.getElementById('advPreview').appendChild(advTable);
+  selectedCells.clear();
+  createCellColorMenu();
 }
 
-// ===== COLOR CLASS APPLY =====
-function applyColorClass(colorClass) {
-  const sel = window.getSelection();
-  if (!sel.rangeCount) return;
-  const range = sel.getRangeAt(0);
-  if (range.collapsed) return;
-
-  const startContainer = range.startContainer;
-  const endContainer = range.endContainer;
-
-  function splitTextNode(node, offset, atEnd=false) {
-    if (node.nodeType !== 3) return node;
-    if (offset === 0 && !atEnd) return node;
-    if (offset === node.length && atEnd) return node;
-    const newNode = atEnd ? node.splitText(offset) : node.splitText(offset);
-    return newNode;
-  }
-
-  splitTextNode(startContainer, range.startOffset);
-  splitTextNode(endContainer, range.endOffset, true);
-
-  const fragment = range.extractContents();
-
-  function applyColorRecursively(node) {
-    if (node.nodeType === 3) return;
-    if (node.nodeType === 1) {
-      node.className = node.className
-        .split(" ")
-        .filter(c => !c.startsWith("text-"))
-        .join(" ");
-      Array.from(node.childNodes).forEach(applyColorRecursively);
-    }
-  }
-
-  Array.from(fragment.childNodes).forEach(applyColorRecursively);
-
-  const wrapper = document.createElement("span");
-  wrapper.classList.add(colorClass);
-  wrapper.appendChild(fragment);
-
-  range.insertNode(wrapper);
-
-  sel.removeAllRanges();
-  const newRange = document.createRange();
-  newRange.selectNodeContents(wrapper);
-  sel.addRange(newRange);
-
-  updateOutput();
+function updateAdvCells(){
+  const width=document.getElementById('advWidth').value;
+  const height=document.getElementById('advHeight').value;
+  const border=document.getElementById('advBorder').value;
+  Array.from(advTable.rows).forEach(tr=>Array.from(tr.cells).forEach(td=>{ td.style.width=width; td.style.height=height; td.style.border=border; }));
 }
 
-// ===== MENU COLORI =====
-const colorBtn=document.getElementById("colorBtn");
-const colorMenu=document.getElementById("colorMenu");
+function startSelection(e, td){ isSelecting=true; toggleCellSelection(td); document.addEventListener('mouseup', stopSelection); }
+function continueSelection(e, td){ if(isSelecting) toggleCellSelection(td); }
+function stopSelection(){ isSelecting=false; document.removeEventListener('mouseup', stopSelection); }
+function toggleCellSelection(td){ if(selectedCells.has(td)){ selectedCells.delete(td); td.style.outline=''; } else{ selectedCells.add(td); td.style.outline='2px dashed #2196F3'; } }
 
-colorBtn.onclick=()=> colorMenu.classList.toggle("hidden");
+function advAddRow(){ const newRow=advTable.rows[0].cloneNode(true); Array.from(newRow.cells).forEach(td=>{ td.textContent="Cella"; td.style.background="#ffffff"; td.style.color="#000000"; td.onmousedown=(e)=>startSelection(e,td); td.onmouseover=(e)=>continueSelection(e,td); }); advTable.appendChild(newRow); document.getElementById('advRows').value=advTable.rows.length; }
+function advAddCol(){ Array.from(advTable.rows).forEach(row=>{ const td=row.cells[0].cloneNode(true); td.textContent="Cella"; td.style.background="#ffffff"; td.style.color="#000000"; td.onmousedown=(e)=>startSelection(e,td); td.onmouseover=(e)=>continueSelection(e,td); row.appendChild(td); }); document.getElementById('advCols').value=advTable.rows[0].cells.length; }
+function advDelRow(){ if(advTable.rows.length>1){ advTable.deleteRow(-1); document.getElementById('advRows').value=advTable.rows.length; } }
+function advDelCol(){ if(advTable.rows[0].cells.length>1){ Array.from(advTable.rows).forEach(r=>r.deleteCell(-1)); document.getElementById('advCols').value=advTable.rows[0].cells.length; } }
+function copySelectedRows(){ copiedRows=[]; advTable.querySelectorAll('tr').forEach(tr=>{ let rowCopy=[]; Array.from(tr.cells).forEach(td=>{ if(selectedCells.has(td)) rowCopy.push(td.cloneNode(true)); }); if(rowCopy.length) copiedRows.push(rowCopy); }); alert('Righe copiate!'); }
+function pasteRows(){ copiedRows.forEach(rowCells=>{ const newRow=document.createElement('tr'); rowCells.forEach(td=>{ const newCell=td.cloneNode(true); newCell.onmousedown=(e)=>startSelection(e,newCell); newCell.onmouseover=(e)=>continueSelection(e,newCell); newRow.appendChild(newCell); }); advTable.appendChild(newRow); }); document.getElementById('advRows').value=advTable.rows.length; }
 
-document.querySelectorAll(".color-item").forEach(btn=>{
-  btn.onclick=()=>{
-    applyColorClass(btn.dataset.class);
-    colorMenu.classList.add("hidden");
-  }
-});
+function insertAdvTable(){ const wrapper=document.createElement('div'); wrapper.appendChild(advTable.cloneNode(true)); const sel=window.getSelection(); if(!sel.rangeCount) return; const range=sel.getRangeAt(0); range.deleteContents(); range.insertNode(wrapper); closeAdvancedTableModal(); selectedCells.clear(); updateOutput(); }
+function resetSelectedCellsColor(){
+  selectedCells.forEach(td=>{
+    td.style.background="#ffffff";
+    td.style.color="#000000";
+  });
+}
+function changeCellWidth(delta){
+  const input=document.getElementById('advWidth');
+  let value=parseInt(input.value);
+  if(isNaN(value)) value=100;
+  value+=delta;
+  if(value<10) value=10;
+  input.value=value+'px';
+  updateAdvCells();
+}
 
-function updateOutput(){
-  document.getElementById("html-output").value=document.getElementById("editor").innerHTML;
+function changeCellHeight(delta){
+  const input=document.getElementById('advHeight');
+  let value=parseInt(input.value);
+  if(isNaN(value)) value=50;
+  value+=delta;
+  if(value<10) value=10;
+  input.value=value+'px';
+  updateAdvCells();
+}
+
+function changeCellBorder(delta){
+  const input=document.getElementById('advBorder');
+  const regex=/(\d+)px/;
+  let match=input.value.match(regex);
+  let value=match ? parseInt(match[1]) : 1;
+  value+=delta;
+  if(value<0) value=0;
+  input.value=value+'px solid #000';
+  updateAdvCells();
+}
+
+/* ==================== MENU COLORI CELLE ==================== */
+const colors=["#F44336","#E91E63","#9C27B0","#673AB7","#3F51B5","#2196F3","#03A9F4","#00BCD4","#009688","#4CAF50","#8BC34A","#CDDC39","#FFEB3B","#FFC107","#FF9800","#FF5722","#795548","#607D8B","#9E9E9E"];
+function createCellColorMenu(){
+  const menu=document.getElementById('cellColorMenu'); menu.innerHTML='';
+  colors.forEach(c=>{
+    const btn=document.createElement('button'); btn.style.background=c;
+    btn.onclick=()=>{ selectedCells.forEach(td=>td.style.background=c); }
+    menu.appendChild(btn);
+  });
 }
 </script>
-
 </body>
 </html>
