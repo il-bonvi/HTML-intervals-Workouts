@@ -1,67 +1,50 @@
-Custom HTML Workout Engine & Translator
 
-A lightweight, high-performance HTML markup generator designed to bridge the gap between visual editing and clean, production-ready code. Unlike standard WYSIWYG editors, this tool acts as a translator, converting user input into a specific, class-based HTML structure optimized for coaching platforms, CMS, and performance databases.
-💡 The Core Logic
+# 🏋️‍♂️ HTML Workout Editor
 
-The engine is built on top of the contentEditable API but bypasses its default messy behavior. It enforces a strict CSS-class-based styling system, ensuring that the generated HTML remains consistent, portable, and free of inline-style "pollution."
-🚀 Advanced Technical Features
-🧬 Granular DOM Manipulation
+## 🇬🇧 English
 
-The editor implements custom logic to handle complex text selections:
+This file was created primarily to generate formatted text for use in workout descriptions on [intervals.icu](https://intervals.icu). However, it can be used for any purpose where clean, class-based HTML is needed.
 
-    splitTextNode: Precisely splits text nodes at selection boundaries to apply styles without corrupting the surrounding DOM tree.
+### ✨ Features
 
-    applyColorClass: A recursive function that flushes existing formatting classes before applying new ones, preventing infinite <span> nesting.
+- 🖊️ **Visual HTML Editor:** Write and format text visually, then copy the generated HTML for use anywhere.
+- 🎨 **Color Picker:** Apply text colors using only the classes defined in the included color palette (Material Design). All available colors are grouped by family and shade.
+- 🏷️ **Class-based Styling:** No inline styles—only CSS classes for maximum portability and consistency.
+- 📋 **Table Generator:** Quickly insert HTML tables with a custom number of rows and columns.
+- 🧹 **Clean Output:** The generated HTML is optimized for use in coaching platforms, CMS, and performance databases.
+- ⚡ **No Dependencies:** Everything runs in your browser, no installation required.
 
-    resetColor: An extraction algorithm that strips formatting while preserving text integrity.
+### 💡 Typical Use Cases
 
-📊 Structured Table Generator
+- 🏃 Creating workout descriptions for intervals.icu or similar platforms
+- 🌐 Generating HTML for any web-based system that requires clean, class-based markup
+- 📋 Copying and pasting formatted HTML into external tools or databases
 
-A dedicated module to create HTML tables with dynamic row/column parameters, specifically designed for displaying training protocols, interval sets, and performance data.
-🛠️ Usage for Performance Scientists
+### 📄 License
 
-This tool is ideal for developers and trainers who need to:
+MIT License
 
-    Generate clean HTML for workout descriptions.
+---
 
-    Maintain a unified design system by mapping UI actions to predefined CSS classes (e.g., .text-red for high-intensity zones).
+## 🇮🇹 Italiano
 
-    Inject structured content into external databases without manual sanitization.
+Questo file è stato creato principalmente per generare testo formattato da inserire nelle descrizioni dei workout su [intervals.icu](https://intervals.icu), ma può essere usato per qualsiasi scopo dove serva HTML pulito e basato su classi.
 
-📄 License
+### ✨ Funzionalità
 
-This project is licensed under the MIT License.
-🇮🇹 Versione Italiana
-Custom HTML Workout Engine & Translator
+- 🖊️ **Editor HTML Visuale:** Scrivi e formatta il testo in modo visuale, poi copia l’HTML generato per usarlo ovunque.
+- 🎨 **Selettore Colori:** Applica colori al testo usando solo le classi definite nella palette inclusa (Material Design). Tutti i colori disponibili sono raggruppati per famiglia e tonalità.
+- 🏷️ **Stile Solo Classi:** Nessuno stile inline—solo classi CSS per la massima portabilità e coerenza.
+- 📋 **Generatore di Tabelle:** Inserisci rapidamente tabelle HTML con numero di righe e colonne a scelta.
+- 🧹 **Output Pulito:** L’HTML generato è ottimizzato per piattaforme di coaching, CMS e database di performance.
+- ⚡ **Nessuna Dipendenza:** Tutto funziona nel browser, senza installazione.
 
-Un generatore di markup HTML leggero e ad alte prestazioni, progettato per colmare il divario tra l'editing visuale e un codice pulito pronto per la produzione. A differenza dei comuni editor WYSIWYG, questo strumento funge da vero e proprio traduttore, convertendo l'input dell'utente in una struttura HTML basata su classi, ottimizzata per piattaforme di coaching, CMS e database di performance.
-💡 La Logica Centrale
+### 💡 Esempi d’Uso
 
-Il motore è costruito sull'API contentEditable, ma ne evita i tipici output disordinati. Impone un sistema di stile rigoroso basato su classi CSS, garantendo che l'HTML generato rimanga coerente, portabile e privo di stili inline superflui.
-🚀 Caratteristiche Tecniche Avanzate
-🧬 Manipolazione Granulare del DOM
+- 🏃 Creazione di descrizioni workout per intervals.icu o piattaforme simili
+- 🌐 Generazione di HTML per qualsiasi sistema web che richieda markup pulito e a classi
+- 📋 Copia e incolla di HTML formattato in strumenti o database esterni
 
-L'editor implementa una logica personalizzata per gestire selezioni di testo complesse:
+### 📄 Licenza
 
-    splitTextNode: Divide con precisione i nodi di testo ai confini della selezione per applicare stili senza corrompere l'albero DOM circostante.
-
-    applyColorClass: Una funzione ricorsiva che pulisce le classi di formattazione esistenti prima di applicarne di nuove, evitando la nidificazione infinita di tag <span>.
-
-    resetColor: Un algoritmo di estrazione che rimuove la formattazione preservando l'integrità del testo.
-
-📊 Generatore di Tabelle Strutturate
-
-Un modulo dedicato per creare tabelle HTML con parametri dinamici di righe/colonne, specificamente progettato per visualizzare protocolli di allenamento, serie di intervalli e dati di performance.
-🛠️ Casi d'Uso per Esperti di Performance
-
-Questo strumento è ideale per sviluppatori e trainer che hanno bisogno di:
-
-    Generare HTML pulito per le descrizioni dei workout.
-
-    Mantenere un design system unificato mappando le azioni dell'interfaccia a classi CSS predefinite (es. .text-red per le zone ad alta intensità).
-
-    Iniettare contenuti strutturati in database esterni senza necessità di pulizia manuale.
-
-📄 Licenza
-
-Questo progetto è distribuito sotto licenza MIT.
+Licenza MIT

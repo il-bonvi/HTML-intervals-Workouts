@@ -86,6 +86,8 @@ button[onclick="resetColor()"] {
 .text-blue-grey { color: #607D8B; }
 .text-grey { color: #9E9E9E; }
 
+/* GENERATED COLOR CLASSES - Will be added by JavaScript */
+
 /* =========================
    COLOR MENU
    ========================= */
@@ -142,16 +144,6 @@ button[onclick="resetColor()"] {
 .bg-blue-grey { background: #607D8B; }
 .bg-grey { background: #9E9E9E; }
 
-/* ==================== MODALE SUPER AVANZATA ==================== */
-#advancedTableModal {
-  display:none; 
-  position:fixed; top:10%; left:50%; transform:translateX(-50%);
-  background:#fff; border:1px solid #ccc; padding:20px; z-index:1000; 
-  max-height:80vh; overflow:auto; width:fit-content;
-}
-#advPreview table td { cursor:pointer; text-align:center; vertical-align:middle; }
-.advColorMenu { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:10px; }
-.advColorMenu button { width:24px; height:24px; border:1px solid #ccc; cursor:pointer; padding:0; }
 </style>
 </head>
 
@@ -174,27 +166,7 @@ button[onclick="resetColor()"] {
   <button onclick="insertBasicTable()">📋 Tabella</button>
   <button onclick="clearEditor()">🧹 Pulisci</button>
 
-  <div id="colorMenu" class="color-menu hidden">
-    <button class="color-item" data-class="text-red"><span>Red</span><span class="swatch bg-red"></span></button>
-    <button class="color-item" data-class="text-pink"><span>Pink</span><span class="swatch bg-pink"></span></button>
-    <button class="color-item" data-class="text-purple"><span>Purple</span><span class="swatch bg-purple"></span></button>
-    <button class="color-item" data-class="text-deep-purple"><span>Deep Purple</span><span class="swatch bg-deep-purple"></span></button>
-    <button class="color-item" data-class="text-indigo"><span>Indigo</span><span class="swatch bg-indigo"></span></button>
-    <button class="color-item" data-class="text-blue"><span>Blue</span><span class="swatch bg-blue"></span></button>
-    <button class="color-item" data-class="text-light-blue"><span>Light Blue</span><span class="swatch bg-light-blue"></span></button>
-    <button class="color-item" data-class="text-cyan"><span>Cyan</span><span class="swatch bg-cyan"></span></button>
-    <button class="color-item" data-class="text-teal"><span>Teal</span><span class="swatch bg-teal"></span></button>
-    <button class="color-item" data-class="text-green"><span>Green</span><span class="swatch bg-green"></span></button>
-    <button class="color-item" data-class="text-light-green"><span>Light Green</span><span class="swatch bg-light-green"></span></button>
-    <button class="color-item" data-class="text-lime"><span>Lime</span><span class="swatch bg-lime"></span></button>
-    <button class="color-item" data-class="text-yellow"><span>Yellow</span><span class="swatch bg-yellow"></span></button>
-    <button class="color-item" data-class="text-amber"><span>Amber</span><span class="swatch bg-amber"></span></button>
-    <button class="color-item" data-class="text-orange"><span>Orange</span><span class="swatch bg-orange"></span></button>
-    <button class="color-item" data-class="text-deep-orange"><span>Deep Orange</span><span class="swatch bg-deep-orange"></span></button>
-    <button class="color-item" data-class="text-brown"><span>Brown</span><span class="swatch bg-brown"></span></button>
-    <button class="color-item" data-class="text-blue-grey"><span>Blue Grey</span><span class="swatch bg-blue-grey"></span></button>
-    <button class="color-item" data-class="text-grey"><span>Grey</span><span class="swatch bg-grey"></span></button>
-  </div>
+  <div id="colorMenu" class="color-menu hidden" style="max-height:720px; min-width:320px; overflow:auto;"></div>
 </div>
 
 <div id="editor" contenteditable="true" oninput="updateOutput()">
@@ -206,13 +178,158 @@ button[onclick="resetColor()"] {
 <button onclick="copyHTML()">📋 Copia HTML</button>
 
 <script>
+// ======= GENERA DINAMICAMENTE TUTTE LE CLASSI CSS PER I COLORI =======
+function generateColorClasses() {
+  const COLORS = {
+    "red": ["base","#F44336","lighten-5","#FFEBEE","lighten-4","#FFCDD2","lighten-3","#EF9A9A","lighten-2","#E57373","lighten-1","#EF5350","darken-1","#E53935","darken-2","#D32F2F","darken-3","#C62828","darken-4","#B71C1C","accent-1","#FF8A80","accent-2","#FF5252","accent-3","#FF1744","accent-4","#D50000"],
+    "pink": ["base","#E91E63","lighten-5","#FCE4EC","lighten-4","#F8BBD0","lighten-3","#F48FB1","lighten-2","#F06292","lighten-1","#EC407A","darken-1","#D81B60","darken-2","#C2185B","darken-3","#AD1457","darken-4","#880E4F","accent-1","#FF80AB","accent-2","#FF4081","accent-3","#F50057","accent-4","#C51162"],
+    "purple": ["base","#9C27B0","lighten-5","#F3E5F5","lighten-4","#E1BEE7","lighten-3","#CE93D8","lighten-2","#BA68C8","lighten-1","#AB47BC","darken-1","#8E24AA","darken-2","#7B1FA2","darken-3","#6A1B9A","darken-4","#4A148C","accent-1","#EA80FC","accent-2","#E040FB","accent-3","#D500F9","accent-4","#AA00FF"],
+    "deep-purple": ["base","#673AB7","lighten-5","#EDE7F6","lighten-4","#D1C4E9","lighten-3","#B39DDB","lighten-2","#9575CD","lighten-1","#7E57C2","darken-1","#5E35B1","darken-2","#512DA8","darken-3","#4527A0","darken-4","#311B92","accent-1","#B388FF","accent-2","#7C4DFF","accent-3","#651FFF","accent-4","#6200EA"],
+    "indigo": ["base","#3F51B5","lighten-5","#E8EAF6","lighten-4","#C5CAE9","lighten-3","#9FA8DA","lighten-2","#7986CB","lighten-1","#5C6BC0","darken-1","#3949AB","darken-2","#303F9F","darken-3","#283593","darken-4","#1A237E","accent-1","#8C9EFF","accent-2","#536DFE","accent-3","#3D5AFE","accent-4","#304FFE"],
+    "blue": ["base","#2196F3","lighten-5","#E3F2FD","lighten-4","#BBDEFB","lighten-3","#90CAF9","lighten-2","#64B5F6","lighten-1","#42A5F5","darken-1","#1E88E5","darken-2","#1976D2","darken-3","#1565C0","darken-4","#0D47A1","accent-1","#82B1FF","accent-2","#448AFF","accent-3","#2979FF","accent-4","#2962FF"],
+    "light-blue": ["base","#03A9F4","lighten-5","#E1F5FE","lighten-4","#B3E5FC","lighten-3","#81D4FA","lighten-2","#4FC3F7","lighten-1","#29B6F6","darken-1","#039BE5","darken-2","#0288D1","darken-3","#0277BD","darken-4","#01579B","accent-1","#80D8FF","accent-2","#40C4FF","accent-3","#00B0FF","accent-4","#0091EA"],
+    "cyan": ["base","#00BCD4","lighten-5","#E0F7FA","lighten-4","#B2EBF2","lighten-3","#80DEEA","lighten-2","#4DD0E1","lighten-1","#26C6DA","darken-1","#00ACC1","darken-2","#0097A7","darken-3","#00838F","darken-4","#006064","accent-1","#84FFFF","accent-2","#18FFFF","accent-3","#00E5FF","accent-4","#00B8D4"],
+    "teal": ["base","#009688","lighten-5","#E0F2F1","lighten-4","#B2DFDB","lighten-3","#80CBC4","lighten-2","#4DB6AC","lighten-1","#26A69A","darken-1","#00897B","darken-2","#00796B","darken-3","#00695C","darken-4","#004D40","accent-1","#A7FFEB","accent-2","#64FFDA","accent-3","#1DE9B6","accent-4","#00BFA5"],
+    "green": ["base","#4CAF50","lighten-5","#E8F5E9","lighten-4","#C8E6C9","lighten-3","#A5D6A7","lighten-2","#81C784","lighten-1","#66BB6A","darken-1","#43A047","darken-2","#388E3C","darken-3","#2E7D32","darken-4","#1B5E20","accent-1","#B9F6CA","accent-2","#69F0AE","accent-3","#00E676","accent-4","#00C853"],
+    "light-green": ["base","#8BC34A","lighten-5","#F1F8E9","lighten-4","#DCEDC8","lighten-3","#C5E1A5","lighten-2","#AED581","lighten-1","#9CCC65","darken-1","#7CB342","darken-2","#689F38","darken-3","#558B2F","darken-4","#33691E","accent-1","#CCFF90","accent-2","#B2FF59","accent-3","#76FF03","accent-4","#64DD17"],
+    "lime": ["base","#CDDC39","lighten-5","#F9FBE7","lighten-4","#F0F4C3","lighten-3","#E6EE9C","lighten-2","#DCE775","lighten-1","#D4E157","darken-1","#C0CA33","darken-2","#AFB42B","darken-3","#9E9D24","darken-4","#827717","accent-1","#F4FF81","accent-2","#EEFF41","accent-3","#C6FF00","accent-4","#AEEA00"],
+    "yellow": ["base","#FFEB3B","lighten-5","#FFFDE7","lighten-4","#FFF9C4","lighten-3","#FFF59D","lighten-2","#FFF176","lighten-1","#FFEE58","darken-1","#FDD835","darken-2","#FBC02D","darken-3","#F9A825","darken-4","#F57F17","accent-1","#FFFF8D","accent-2","#FFFF00","accent-3","#FFEA00","accent-4","#FFD600"],
+    "amber": ["base","#FFC107","lighten-5","#FFF8E1","lighten-4","#FFECB3","lighten-3","#FFE082","lighten-2","#FFD54F","lighten-1","#FFCA28","darken-1","#FFB300","darken-2","#FFA000","darken-3","#FF8F00","darken-4","#FF6F00","accent-1","#FFE57F","accent-2","#FFD740","accent-3","#FFC400","accent-4","#FFAB00"],
+    "orange": ["base","#FF9800","lighten-5","#FFF3E0","lighten-4","#FFE0B2","lighten-3","#FFCC80","lighten-2","#FFB74D","lighten-1","#FFA726","darken-1","#FB8C00","darken-2","#F57C00","darken-3","#EF6C00","darken-4","#E65100","accent-1","#FFD180","accent-2","#FFAB40","accent-3","#FF9100","accent-4","#FF6D00"],
+    "deep-orange": ["base","#FF5722","lighten-5","#FBE9E7","lighten-4","#FFCCBC","lighten-3","#FFAB91","lighten-2","#FF8A65","lighten-1","#FF7043","darken-1","#F4511E","darken-2","#E64A19","darken-3","#D84315","darken-4","#BF360C","accent-1","#FF9E80","accent-2","#FF6E40","accent-3","#FF3D00","accent-4","#DD2C00"],
+    "brown": ["base","#795548","lighten-5","#EFEBE9","lighten-4","#D7CCC8","lighten-3","#BCAAA4","lighten-2","#A1887F","lighten-1","#8D6E63","darken-1","#6D4C41","darken-2","#5D4037","darken-3","#4E342E","darken-4","#3E2723"],
+    "blue-grey": ["base","#607D8B","lighten-5","#ECEFF1","lighten-4","#CFD8DC","lighten-3","#B0BEC5","lighten-2","#90A4AE","lighten-1","#78909C","darken-1","#546E7A","darken-2","#455A64","darken-3","#37474F","darken-4","#263238"],
+    "grey": ["base","#9E9E9E","lighten-5","#FAFAFA","lighten-4","#F5F5F5","lighten-3","#EEEEEE","lighten-2","#E0E0E0","lighten-1","#BDBDBD","darken-1","#757575","darken-2","#616161","darken-3","#424242","darken-4","#212121"]
+  };
+
+  let styles = "";
+  Object.keys(COLORS).forEach(colorGroup => {
+    COLORS[colorGroup].forEach((val, i, arr) => {
+      if (i % 2 === 0) {
+        const shade = arr[i];
+        const hex = arr[i+1];
+        styles += `.text-${colorGroup}-${shade} { color: ${hex}; }\n`;
+      }
+    });
+  });
+
+  const styleSheet = document.createElement("style");
+  styleSheet.textContent = styles;
+  document.head.appendChild(styleSheet);
+}
+
+// Genera le classi CSS all'inizio
+generateColorClasses();
+
+// ======= PALETTE COLORI DA COLORI.html =======
+const COLORS = {
+  "red": ["base","#F44336","lighten-5","#FFEBEE","lighten-4","#FFCDD2","lighten-3","#EF9A9A","lighten-2","#E57373","lighten-1","#EF5350","darken-1","#E53935","darken-2","#D32F2F","darken-3","#C62828","darken-4","#B71C1C","accent-1","#FF8A80","accent-2","#FF5252","accent-3","#FF1744","accent-4","#D50000"],
+  "pink": ["base","#E91E63","lighten-5","#FCE4EC","lighten-4","#F8BBD0","lighten-3","#F48FB1","lighten-2","#F06292","lighten-1","#EC407A","darken-1","#D81B60","darken-2","#C2185B","darken-3","#AD1457","darken-4","#880E4F","accent-1","#FF80AB","accent-2","#FF4081","accent-3","#F50057","accent-4","#C51162"],
+  "purple": ["base","#9C27B0","lighten-5","#F3E5F5","lighten-4","#E1BEE7","lighten-3","#CE93D8","lighten-2","#BA68C8","lighten-1","#AB47BC","darken-1","#8E24AA","darken-2","#7B1FA2","darken-3","#6A1B9A","darken-4","#4A148C","accent-1","#EA80FC","accent-2","#E040FB","accent-3","#D500F9","accent-4","#AA00FF"],
+  "deep-purple": ["base","#673AB7","lighten-5","#EDE7F6","lighten-4","#D1C4E9","lighten-3","#B39DDB","lighten-2","#9575CD","lighten-1","#7E57C2","darken-1","#5E35B1","darken-2","#512DA8","darken-3","#4527A0","darken-4","#311B92","accent-1","#B388FF","accent-2","#7C4DFF","accent-3","#651FFF","accent-4","#6200EA"],
+  "indigo": ["base","#3F51B5","lighten-5","#E8EAF6","lighten-4","#C5CAE9","lighten-3","#9FA8DA","lighten-2","#7986CB","lighten-1","#5C6BC0","darken-1","#3949AB","darken-2","#303F9F","darken-3","#283593","darken-4","#1A237E","accent-1","#8C9EFF","accent-2","#536DFE","accent-3","#3D5AFE","accent-4","#304FFE"],
+  "blue": ["base","#2196F3","lighten-5","#E3F2FD","lighten-4","#BBDEFB","lighten-3","#90CAF9","lighten-2","#64B5F6","lighten-1","#42A5F5","darken-1","#1E88E5","darken-2","#1976D2","darken-3","#1565C0","darken-4","#0D47A1","accent-1","#82B1FF","accent-2","#448AFF","accent-3","#2979FF","accent-4","#2962FF"],
+  "light-blue": ["base","#03A9F4","lighten-5","#E1F5FE","lighten-4","#B3E5FC","lighten-3","#81D4FA","lighten-2","#4FC3F7","lighten-1","#29B6F6","darken-1","#039BE5","darken-2","#0288D1","darken-3","#0277BD","darken-4","#01579B","accent-1","#80D8FF","accent-2","#40C4FF","accent-3","#00B0FF","accent-4","#0091EA"],
+  "cyan": ["base","#00BCD4","lighten-5","#E0F7FA","lighten-4","#B2EBF2","lighten-3","#80DEEA","lighten-2","#4DD0E1","lighten-1","#26C6DA","darken-1","#00ACC1","darken-2","#0097A7","darken-3","#00838F","darken-4","#006064","accent-1","#84FFFF","accent-2","#18FFFF","accent-3","#00E5FF","accent-4","#00B8D4"],
+  "teal": ["base","#009688","lighten-5","#E0F2F1","lighten-4","#B2DFDB","lighten-3","#80CBC4","lighten-2","#4DB6AC","lighten-1","#26A69A","darken-1","#00897B","darken-2","#00796B","darken-3","#00695C","darken-4","#004D40","accent-1","#A7FFEB","accent-2","#64FFDA","accent-3","#1DE9B6","accent-4","#00BFA5"],
+  "green": ["base","#4CAF50","lighten-5","#E8F5E9","lighten-4","#C8E6C9","lighten-3","#A5D6A7","lighten-2","#81C784","lighten-1","#66BB6A","darken-1","#43A047","darken-2","#388E3C","darken-3","#2E7D32","darken-4","#1B5E20","accent-1","#B9F6CA","accent-2","#69F0AE","accent-3","#00E676","accent-4","#00C853"],
+  "light-green": ["base","#8BC34A","lighten-5","#F1F8E9","lighten-4","#DCEDC8","lighten-3","#C5E1A5","lighten-2","#AED581","lighten-1","#9CCC65","darken-1","#7CB342","darken-2","#689F38","darken-3","#558B2F","darken-4","#33691E","accent-1","#CCFF90","accent-2","#B2FF59","accent-3","#76FF03","accent-4","#64DD17"],
+  "lime": ["base","#CDDC39","lighten-5","#F9FBE7","lighten-4","#F0F4C3","lighten-3","#E6EE9C","lighten-2","#DCE775","lighten-1","#D4E157","darken-1","#C0CA33","darken-2","#AFB42B","darken-3","#9E9D24","darken-4","#827717","accent-1","#F4FF81","accent-2","#EEFF41","accent-3","#C6FF00","accent-4","#AEEA00"],
+  "yellow": ["base","#FFEB3B","lighten-5","#FFFDE7","lighten-4","#FFF9C4","lighten-3","#FFF59D","lighten-2","#FFF176","lighten-1","#FFEE58","darken-1","#FDD835","darken-2","#FBC02D","darken-3","#F9A825","darken-4","#F57F17","accent-1","#FFFF8D","accent-2","#FFFF00","accent-3","#FFEA00","accent-4","#FFD600"],
+  "amber": ["base","#FFC107","lighten-5","#FFF8E1","lighten-4","#FFECB3","lighten-3","#FFE082","lighten-2","#FFD54F","lighten-1","#FFCA28","darken-1","#FFB300","darken-2","#FFA000","darken-3","#FF8F00","darken-4","#FF6F00","accent-1","#FFE57F","accent-2","#FFD740","accent-3","#FFC400","accent-4","#FFAB00"],
+  "orange": ["base","#FF9800","lighten-5","#FFF3E0","lighten-4","#FFE0B2","lighten-3","#FFCC80","lighten-2","#FFB74D","lighten-1","#FFA726","darken-1","#FB8C00","darken-2","#F57C00","darken-3","#EF6C00","darken-4","#E65100","accent-1","#FFD180","accent-2","#FFAB40","accent-3","#FF9100","accent-4","#FF6D00"],
+  "deep-orange": ["base","#FF5722","lighten-5","#FBE9E7","lighten-4","#FFCCBC","lighten-3","#FFAB91","lighten-2","#FF8A65","lighten-1","#FF7043","darken-1","#F4511E","darken-2","#E64A19","darken-3","#D84315","darken-4","#BF360C","accent-1","#FF9E80","accent-2","#FF6E40","accent-3","#FF3D00","accent-4","#DD2C00"],
+  "brown": ["base","#795548","lighten-5","#EFEBE9","lighten-4","#D7CCC8","lighten-3","#BCAAA4","lighten-2","#A1887F","lighten-1","#8D6E63","darken-1","#6D4C41","darken-2","#5D4037","darken-3","#4E342E","darken-4","#3E2723"],
+  "blue-grey": ["base","#607D8B","lighten-5","#ECEFF1","lighten-4","#CFD8DC","lighten-3","#B0BEC5","lighten-2","#90A4AE","lighten-1","#78909C","darken-1","#546E7A","darken-2","#455A64","darken-3","#37474F","darken-4","#263238"],
+  "grey": ["base","#9E9E9E","lighten-5","#FAFAFA","lighten-4","#F5F5F5","lighten-3","#EEEEEE","lighten-2","#E0E0E0","lighten-1","#BDBDBD","darken-1","#757575","darken-2","#616161","darken-3","#424242","darken-4","#212121"]
+};
+
+// ======= MENU DINAMICO COLORI PRINCIPALE (SOSTITUISCE IL VECCHIO) =======
+const colorBtn = document.getElementById("colorBtn");
+const colorMenu = document.getElementById("colorMenu");
+
+function createColorMenu() {
+  colorMenu.innerHTML = "";
+  Object.keys(COLORS).forEach(colorGroup => {
+    // Bottone gruppo principale
+    const groupBtn = document.createElement("button");
+    groupBtn.className = "color-item";
+    groupBtn.style.fontWeight = "bold";
+    groupBtn.innerHTML = `<span>${colorGroup}</span><span class=\"swatch\" style=\"background:${COLORS[colorGroup][1]}\"></span>`;
+    groupBtn.onclick = function(e) {
+      e.stopPropagation();
+      // Toggle sottomenu
+      const sub = this.nextSibling;
+      if (sub.style.display === "block") sub.style.display = "none";
+      else sub.style.display = "block";
+    };
+    colorMenu.appendChild(groupBtn);
+    // Sottomenu
+    const subMenu = document.createElement("div");
+    subMenu.style.display = "none";
+    subMenu.style.marginLeft = "10px";
+    COLORS[colorGroup].forEach((val, i, arr) => {
+      if (i % 2 === 0) {
+        const shade = arr[i];
+        const hex = arr[i+1];
+        const shadeBtn = document.createElement("button");
+        shadeBtn.className = "color-item";
+        shadeBtn.style.width = "90%";
+        shadeBtn.innerHTML = `<span>${colorGroup}-${shade}</span><span class=\"swatch\" style=\"background:${hex}\"></span>`;
+        shadeBtn.onclick = function() {
+          applyColorClass(`text-${colorGroup}-${shade}`);
+          colorMenu.classList.add("hidden");
+        };
+        subMenu.appendChild(shadeBtn);
+      }
+    });
+    colorMenu.appendChild(subMenu);
+  });
+}
+
+colorBtn.onclick = function() {
+  createColorMenu();
+  colorMenu.classList.toggle("hidden");
+};
+document.addEventListener("click", function(e) {
+  if (!colorMenu.contains(e.target) && e.target !== colorBtn) {
+    colorMenu.classList.add("hidden");
+  }
+});
 /* ==================== FUNZIONI BASE ==================== */
 function execCmd(cmd) { document.execCommand(cmd,false,null); updateOutput(); }
 function clearEditor(){ document.getElementById("editor").innerHTML=""; updateOutput(); }
 function copyHTML(){ const t=document.getElementById("html-output"); t.select(); document.execCommand("copy"); alert("HTML copiato!"); }
 function resetColor() { const sel = window.getSelection(); if (!sel.rangeCount) return; const range = sel.getRangeAt(0); if (range.collapsed) return; const fragment = range.extractContents(); function removeTextClasses(node){ if(node.nodeType===1){ node.className=node.className.split(" ").filter(c=>!c.startsWith("text-")).join(" "); Array.from(node.childNodes).forEach(removeTextClasses); } } Array.from(fragment.childNodes).forEach(removeTextClasses); range.insertNode(fragment); updateOutput(); }
-function applyColorClass(colorClass) { const sel = window.getSelection(); if (!sel.rangeCount) return; const range = sel.getRangeAt(0); if (range.collapsed) return; const startContainer = range.startContainer; const endContainer = range.endContainer; function splitTextNode(node, offset, atEnd=false){ if(node.nodeType!==3) return node; if(offset===0&&!atEnd) return node; if(offset===node.length&&atEnd) return node; const newNode = atEnd? node.splitText(offset): node.splitText(offset); return newNode; } splitTextNode(startContainer, range.startOffset); splitTextNode(endContainer, range.endOffset, true); const fragment = range.extractContents(); function applyColorRecursively(node){ if(node.nodeType===3) return; if(node.nodeType===1){ node.className=node.className.split(" ").filter(c=>!c.startsWith("text-")).join(" "); Array.from(node.childNodes).forEach(applyColorRecursively); } } Array.from(fragment.childNodes).forEach(applyColorRecursively); const wrapper=document.createElement("span"); wrapper.classList.add(colorClass); wrapper.appendChild(fragment); range.insertNode(wrapper); sel.removeAllRanges(); const newRange=document.createRange(); newRange.selectNodeContents(wrapper); sel.addRange(newRange); updateOutput(); }
-const colorBtn=document.getElementById("colorBtn"); const colorMenu=document.getElementById("colorMenu"); colorBtn.onclick=()=> colorMenu.classList.toggle("hidden"); document.querySelectorAll(".color-item").forEach(btn=>{ btn.onclick=()=>{ applyColorClass(btn.dataset.class); colorMenu.classList.add("hidden"); } });
+function applyColorClass(colorClass) { 
+  const sel = window.getSelection(); 
+  if (!sel.rangeCount) return; 
+  const range = sel.getRangeAt(0); 
+  if (range.collapsed) return; 
+  
+  const fragment = range.extractContents(); 
+  
+  function removeColorClasses(node) {
+    if (node.nodeType === 1) { 
+      // Elemento: rimuovi tutte le classi text-*
+      node.className = node.className.split(" ").filter(c => !c.startsWith("text-")).join(" ");
+      Array.from(node.childNodes).forEach(removeColorClasses); 
+    }
+  } 
+  
+  Array.from(fragment.childNodes).forEach(removeColorClasses); 
+  
+  const wrapper = document.createElement("span"); 
+  wrapper.classList.add(colorClass); 
+  wrapper.appendChild(fragment); 
+  range.insertNode(wrapper); 
+  
+  sel.removeAllRanges(); 
+  const newRange = document.createRange(); 
+  newRange.selectNodeContents(wrapper); 
+  sel.addRange(newRange); 
+  updateOutput(); 
+}
 function updateOutput(){ document.getElementById("html-output").value=document.getElementById("editor").innerHTML; }
 
 /* ==================== FUNZIONI TABELLA BASE ==================== */
