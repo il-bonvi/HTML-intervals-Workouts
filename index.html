@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML by Bonvi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --accent-primary: #6366f1;
+  --accent-secondary: #8b5cf6;
+  --accent-tertiary: #ec4899;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b7280;
+  --border-color: #d1d5db;
+  --border-focus: #9ca3af;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --editor-bg: #ffffff;
+  --hue: 0;
+}
+
+/* Tema Scuro */
+body.theme-dark {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2a2a2a;
+  --bg-tertiary: #3a3a3a;
+  --text-primary: #e5e5e5;
+  --text-secondary: #9ca3af;
+  --border-color: #404040;
+  --border-focus: #525252;
+  --editor-bg: #1a1a1a;
+}
+
+/* Tema Scuro con Editor Bianco */
+body.theme-dark-white-editor {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2a2a2a;
+  --bg-tertiary: #3a3a3a;
+  --text-primary: #e5e5e5;
+  --text-secondary: #9ca3af;
+  --border-color: #404040;
+  --border-focus: #525252;
+  --editor-bg: #ffffff;
+}
+
+body.theme-dark-white-editor #editor {
+  color: #1a1a1a;
+}
+
+body.theme-dark-white-editor #editor:empty::before {
+  color: #9ca3af;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 1.5rem;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.05) 0%, transparent 50%);
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+header {
+  margin-bottom: 1.5rem;
+  animation: slideDown 0.6s ease-out 0.2s both;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, hsl(var(--hue), 100%, 50%) 0%, hsl(calc(var(--hue) + 120), 100%, 50%) 50%, hsl(calc(var(--hue) + 240), 100%, 50%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.theme-selector {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--bg-secondary);
+  padding: 0.35rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.theme-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.theme-btn.active {
+  background: var(--accent-primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.theme-btn:hover:not(.active) {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.editor-wrapper {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  animation: scaleIn 0.6s ease-out 0.4s both;
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.toolbar {
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  position: static;
+}
+
+.toolbar-wrapper {
+  position: relative;
+}
+
+.toolbar button {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.5rem 0.85rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.toolbar button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.toolbar button:hover::before {
+  width: 200%;
+  height: 200%;
+}
+
+.toolbar button:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-focus);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.toolbar button:active {
+  transform: translateY(0);
+}
+
+#colorBtn {
+  background: linear-gradient(135deg, 
+    hsl(var(--hue), 100%, 50%) 0%, 
+    hsl(calc(var(--hue) + 45), 100%, 50%) 12.5%, 
+    hsl(calc(var(--hue) + 90), 100%, 50%) 25%, 
+    hsl(calc(var(--hue) + 135), 100%, 50%) 37.5%, 
+    hsl(calc(var(--hue) + 180), 100%, 50%) 50%, 
+    hsl(calc(var(--hue) + 225), 100%, 50%) 62.5%, 
+    hsl(calc(var(--hue) + 270), 100%, 50%) 75%, 
+    hsl(calc(var(--hue) + 315), 100%, 50%) 87.5%, 
+    hsl(calc(var(--hue) + 360), 100%, 50%) 100%
+  );
+  color: #000;
+  font-weight: 700;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+#colorBtn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#colorBtn:hover::after {
+  opacity: 1;
+}
+
+button[onclick="resetColor()"] {
+  background: linear-gradient(135deg, #3f3f46 0%, #27272a 100%);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+button[onclick="clearEditor()"] {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  font-weight: 600;
+}
+
+button[onclick="clearEditor()"]:hover {
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+button[onclick="copyHTML()"] {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  font-weight: 600;
+}
+
+button[onclick="copyHTML()"]:hover {
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+#editor {
+  min-height: 350px;
+  padding: 1.5rem;
+  background: var(--editor-bg);
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  outline: none;
+}
+
+#editor:focus {
+  background: var(--editor-bg);
+}
+
+#editor:empty::before {
+  content: 'Inizia a scrivere qui...';
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.output-section {
+  margin-top: 1.5rem;
+  animation: slideUp 0.6s ease-out 0.6s both;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.output-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+#html-output {
+  width: 100%;
+  min-height: 150px;
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+#html-output:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.color-menu {
+  position: fixed;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.75rem;
+  width: 320px;
+  max-height: 740px;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: menuSlideIn 0.2s ease-out;
+  scroll-behavior: smooth;
+}
+
+@keyframes menuSlideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.color-menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.color-menu::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+.color-menu::-webkit-scrollbar-thumb {
+  background: var(--border-focus);
+  border-radius: 4px;
+}
+
+.color-menu::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+.hidden {
+  display: none;
+}
+
+.color-group {
+  margin-bottom: 0.35rem;
+}
+
+.color-group:last-child {
+  margin-bottom: 0;
+}
+
+.color-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.65rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  background: var(--bg-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.color-group-header:hover {
+  background: var(--bg-tertiary);
+}
+
+.color-group-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.color-group-preview {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.color-group-arrow {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  transition: transform 0.2s ease;
+}
+
+.color-group-arrow.expanded {
+  transform: rotate(90deg);
+}
+
+.color-swatches {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.35rem;
+  padding: 0.4rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  margin-bottom: 0.35rem;
+  display: none;
+}
+
+.color-swatches.visible {
+  display: grid;
+}
+
+.color-swatch-btn {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  padding: 0;
+  background: none;
+}
+
+.color-swatch-btn:hover {
+  transform: scale(1.15);
+  border-color: var(--text-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.color-swatch-btn:active {
+  transform: scale(1.05);
+}
+
+.color-swatch-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+  margin-top: 2rem;
+  padding: 1.5rem 0;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  opacity: 0.7;
+  border-top: 1px solid var(--border-color);
+  animation: fadeIn 0.6s ease-out 0.8s both;
+}
+
+footer a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+footer a:hover {
+  color: var(--accent-secondary);
+}
+
+/* TEXT COLOR CLASSES */
+.text-red { color: #F44336; }
+.text-pink { color: #E91E63; }
+.text-purple { color: #9C27B0; }
+.text-deep-purple { color: #673AB7; }
+.text-indigo { color: #3F51B5; }
+.text-blue { color: #2196F3; }
+.text-light-blue { color: #03A9F4; }
+.text-cyan { color: #00BCD4; }
+.text-teal { color: #009688; }
+.text-green { color: #4CAF50; }
+.text-light-green { color: #8BC34A; }
+.text-lime { color: #CDDC39; }
+.text-yellow { color: #FFEB3B; }
+.text-amber { color: #FFC107; }
+.text-orange { color: #FF9800; }
+.text-deep-orange { color: #FF5722; }
+.text-brown { color: #795548; }
+.text-blue-grey { color: #607D8B; }
+.text-grey { color: #9E9E9E; }
+
+/* BG swatches */
+.bg-red { background: #F44336; }
+.bg-pink { background: #E91E63; }
+.bg-purple { background: #9C27B0; }
+.bg-deep-purple { background: #673AB7; }
+.bg-indigo { background: #3F51B5; }
+.bg-blue { background: #2196F3; }
+.bg-light-blue { background: #03A9F4; }
+.bg-cyan { background: #00BCD4; }
+.bg-teal { background: #009688; }
+.bg-green { background: #4CAF50; }
+.bg-light-green { background: #8BC34A; }
+.bg-lime { background: #CDDC39; }
+.bg-yellow { background: #FFEB3B; }
+.bg-amber { background: #FFC107; }
+.bg-orange { background: #FF9800; }
+.bg-deep-orange { background: #FF5722; }
+.bg-brown { background: #795548; }
+.bg-blue-grey { background: #607D8B; }
+.bg-grey { background: #9E9E9E; }
+
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  .header-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .theme-selector {
+    width: 100%;
+  }
+  
+  .theme-btn {
+    flex: 1;
+    padding: 0.5rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .toolbar {
+    padding: 1rem;
+  }
+  
+  #editor {
+    padding: 1.5rem;
+    min-height: 300px;
+  }
+  
+  .color-menu {
+    width: calc(100vw - 2rem);
+    left: 1rem;
+    right: 1rem;
+  }
+}
+
+/* CUSTOM DIALOG OVERLAY */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.custom-dialog {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: dialogSlideIn 0.3s ease-out;
+  border: 1px solid var(--border-color);
+}
+
+@keyframes dialogSlideIn {
+  from { opacity: 0; transform: scale(0.9) translateY(-20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.dialog-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.dialog-message {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.dialog-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9375rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.dialog-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.dialog-btn {
+  padding: 0.65rem 1.5rem;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.dialog-btn-cancel {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.dialog-btn-cancel:hover {
+  background: var(--border-color);
+}
+
+.dialog-btn-confirm {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  color: white;
+}
+
+.dialog-btn-confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.dialog-btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.dialog-btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-controls">
+      <h1>✨ HTML by Bonvi ❤️</h1>
+      <div class="theme-selector">
+        <button class="theme-btn active" onclick="changeTheme('light')" id="theme-light">☀️ Chiaro</button>
+        <button class="theme-btn" onclick="changeTheme('dark')" id="theme-dark">🌙 Scuro</button>
+        <button class="theme-btn" onclick="changeTheme('dark-white-editor')" id="theme-dark-white-editor">🌗 Ibrido</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="colorMenu" class="color-menu hidden"></div>
+
+  <div class="editor-wrapper">
+    <div class="toolbar">
+      <button onclick="execCmd('bold')"><b>Grassetto</b></button>
+      <button onclick="execCmd('italic')"><i>Corsivo</i></button>
+      <button onclick="execCmd('underline')"><u>Sottolineato</u></button>
+      <button id="colorBtn" type="button">🎨 Colore</button>
+      <button onclick="resetColor()">Reset Colore</button>
+      <button onclick="execCmd('insertUnorderedList')">• Elenco</button>
+      <button onclick="execCmd('insertOrderedList')">1. Elenco</button>
+      <button onclick="execCmd('justifyLeft')">Allinea SX</button>
+      <button onclick="execCmd('justifyCenter')">Centra</button>
+      <button onclick="execCmd('justifyRight')">Allinea DX</button>
+      <button onclick="execCmd('insertHorizontalRule')">━ Linea</button>
+      <button onclick="insertBasicTable()">📊 Tabella</button>
+      <button onclick="clearEditor()">🗑️ Pulisci</button>
+      <button onclick="copyHTML()">📋 Copia HTML</button>
+    </div>
+
+    <div id="editor" contenteditable="true" oninput="updateOutput()"></div>
+  </div>
+
+  <div class="output-section">
+    <div class="output-label">Codice HTML Generato</div>
+    <textarea id="html-output" readonly></textarea>
+  </div>
+
+  <footer>
+    HTML Standalone Engine &mdash; Copyright &copy; 2026 <a href="https://linktr.ee/bonvicin.coaching">Andrea Bonvicin</a> &mdash; Licensed under the MIT License
+  </footer>
+</div>
+
+<script>
+// ======= GENERA CLASSI COLORE DINAMICHE =======
+function generateColorClasses() {
+  const COLORS = {
+    "red": ["base","#F44336","lighten-5","#FFEBEE","lighten-4","#FFCDD2","lighten-3","#EF9A9A","lighten-2","#E57373","lighten-1","#EF5350","darken-1","#E53935","darken-2","#D32F2F","darken-3","#C62828","darken-4","#B71C1C","accent-1","#FF8A80","accent-2","#FF5252","accent-3","#FF1744","accent-4","#D50000"],
+    "pink": ["base","#E91E63","lighten-5","#FCE4EC","lighten-4","#F8BBD0","lighten-3","#F48FB1","lighten-2","#F06292","lighten-1","#EC407A","darken-1","#D81B60","darken-2","#C2185B","darken-3","#AD1457","darken-4","#880E4F","accent-1","#FF80AB","accent-2","#FF4081","accent-3","#F50057","accent-4","#C51162"],
+    "purple": ["base","#9C27B0","lighten-5","#F3E5F5","lighten-4","#E1BEE7","lighten-3","#CE93D8","lighten-2","#BA68C8","lighten-1","#AB47BC","darken-1","#8E24AA","darken-2","#7B1FA2","darken-3","#6A1B9A","darken-4","#4A148C","accent-1","#EA80FC","accent-2","#E040FB","accent-3","#D500F9","accent-4","#AA00FF"],
+    "deep-purple": ["base","#673AB7","lighten-5","#EDE7F6","lighten-4","#D1C4E9","lighten-3","#B39DDB","lighten-2","#9575CD","lighten-1","#7E57C2","darken-1","#5E35B1","darken-2","#512DA8","darken-3","#4527A0","darken-4","#311B92","accent-1","#B388FF","accent-2","#7C4DFF","accent-3","#651FFF","accent-4","#6200EA"],
+    "indigo": ["base","#3F51B5","lighten-5","#E8EAF6","lighten-4","#C5CAE9","lighten-3","#9FA8DA","lighten-2","#7986CB","lighten-1","#5C6BC0","darken-1","#3949AB","darken-2","#303F9F","darken-3","#283593","darken-4","#1A237E","accent-1","#8C9EFF","accent-2","#536DFE","accent-3","#3D5AFE","accent-4","#304FFE"],
+    "blue": ["base","#2196F3","lighten-5","#E3F2FD","lighten-4","#BBDEFB","lighten-3","#90CAF9","lighten-2","#64B5F6","lighten-1","#42A5F5","darken-1","#1E88E5","darken-2","#1976D2","darken-3","#1565C0","darken-4","#0D47A1","accent-1","#82B1FF","accent-2","#448AFF","accent-3","#2979FF","accent-4","#2962FF"],
+    "light-blue": ["base","#03A9F4","lighten-5","#E1F5FE","lighten-4","#B3E5FC","lighten-3","#81D4FA","lighten-2","#4FC3F7","lighten-1","#29B6F6","darken-1","#039BE5","darken-2","#0288D1","darken-3","#0277BD","darken-4","#01579B","accent-1","#80D8FF","accent-2","#40C4FF","accent-3","#00B0FF","accent-4","#0091EA"],
+    "cyan": ["base","#00BCD4","lighten-5","#E0F7FA","lighten-4","#B2EBF2","lighten-3","#80DEEA","lighten-2","#4DD0E1","lighten-1","#26C6DA","darken-1","#00ACC1","darken-2","#0097A7","darken-3","#00838F","darken-4","#006064","accent-1","#84FFFF","accent-2","#18FFFF","accent-3","#00E5FF","accent-4","#00B8D4"],
+    "teal": ["base","#009688","lighten-5","#E0F2F1","lighten-4","#B2DFDB","lighten-3","#80CBC4","lighten-2","#4DB6AC","lighten-1","#26A69A","darken-1","#00897B","darken-2","#00796B","darken-3","#00695C","darken-4","#004D40","accent-1","#A7FFEB","accent-2","#64FFDA","accent-3","#1DE9B6","accent-4","#00BFA5"],
+    "green": ["base","#4CAF50","lighten-5","#E8F5E9","lighten-4","#C8E6C9","lighten-3","#A5D6A7","lighten-2","#81C784","lighten-1","#66BB6A","darken-1","#43A047","darken-2","#388E3C","darken-3","#2E7D32","darken-4","#1B5E20","accent-1","#B9F6CA","accent-2","#69F0AE","accent-3","#00E676","accent-4","#00C853"],
+    "light-green": ["base","#8BC34A","lighten-5","#F1F8E9","lighten-4","#DCEDC8","lighten-3","#C5E1A5","lighten-2","#AED581","lighten-1","#9CCC65","darken-1","#7CB342","darken-2","#689F38","darken-3","#558B2F","darken-4","#33691E","accent-1","#CCFF90","accent-2","#B2FF59","accent-3","#76FF03","accent-4","#64DD17"],
+    "lime": ["base","#CDDC39","lighten-5","#F9FBE7","lighten-4","#F0F4C3","lighten-3","#E6EE9C","lighten-2","#DCE775","lighten-1","#D4E157","darken-1","#C0CA33","darken-2","#AFB42B","darken-3","#9E9D24","darken-4","#827717","accent-1","#F4FF81","accent-2","#EEFF41","accent-3","#C6FF00","accent-4","#AEEA00"],
+    "yellow": ["base","#FFEB3B","lighten-5","#FFFDE7","lighten-4","#FFF9C4","lighten-3","#FFF59D","lighten-2","#FFF176","lighten-1","#FFEE58","darken-1","#FDD835","darken-2","#FBC02D","darken-3","#F9A825","darken-4","#F57F17","accent-1","#FFFF8D","accent-2","#FFFF00","accent-3","#FFEA00","accent-4","#FFD600"],
+    "amber": ["base","#FFC107","lighten-5","#FFF8E1","lighten-4","#FFECB3","lighten-3","#FFE082","lighten-2","#FFD54F","lighten-1","#FFCA28","darken-1","#FFB300","darken-2","#FFA000","darken-3","#FF8F00","darken-4","#FF6F00","accent-1","#FFE57F","accent-2","#FFD740","accent-3","#FFC400","accent-4","#FFAB00"],
+    "orange": ["base","#FF9800","lighten-5","#FFF3E0","lighten-4","#FFE0B2","lighten-3","#FFCC80","lighten-2","#FFB74D","lighten-1","#FFA726","darken-1","#FB8C00","darken-2","#F57C00","darken-3","#EF6C00","darken-4","#E65100","accent-1","#FFD180","accent-2","#FFAB40","accent-3","#FF9100","accent-4","#FF6D00"],
+    "deep-orange": ["base","#FF5722","lighten-5","#FBE9E7","lighten-4","#FFCCBC","lighten-3","#FFAB91","lighten-2","#FF8A65","lighten-1","#FF7043","darken-1","#F4511E","darken-2","#E64A19","darken-3","#D84315","darken-4","#BF360C","accent-1","#FF9E80","accent-2","#FF6E40","accent-3","#FF3D00","accent-4","#DD2C00"],
+    "brown": ["base","#795548","lighten-5","#EFEBE9","lighten-4","#D7CCC8","lighten-3","#BCAAA4","lighten-2","#A1887F","lighten-1","#8D6E63","darken-1","#6D4C41","darken-2","#5D4037","darken-3","#4E342E","darken-4","#3E2723"],
+    "blue-grey": ["base","#607D8B","lighten-5","#ECEFF1","lighten-4","#CFD8DC","lighten-3","#B0BEC5","lighten-2","#90A4AE","lighten-1","#78909C","darken-1","#546E7A","darken-2","#455A64","darken-3","#37474F","darken-4","#263238"],
+    "grey": ["base","#9E9E9E","lighten-5","#FAFAFA","lighten-4","#F5F5F5","lighten-3","#EEEEEE","lighten-2","#E0E0E0","lighten-1","#BDBDBD","darken-1","#757575","darken-2","#616161","darken-3","#424242","darken-4","#212121"]
+  };
+
+  let styles = "";
+  Object.keys(COLORS).forEach(colorGroup => {
+    COLORS[colorGroup].forEach((val, i, arr) => {
+      if (i % 2 === 0) {
+        const shade = arr[i];
+        const hex = arr[i+1];
+        styles += `.text-${colorGroup}-${shade} { color: ${hex}; }\n`;
+      }
+    });
+  });
+
+  const styleSheet = document.createElement("style");
+  styleSheet.textContent = styles;
+  document.head.appendChild(styleSheet);
+}
+
+generateColorClasses();
+
+// ======= PALETTE COLORI =======
+const COLORS = {
+  "red": ["base","#F44336","lighten-5","#FFEBEE","lighten-4","#FFCDD2","lighten-3","#EF9A9A","lighten-2","#E57373","lighten-1","#EF5350","darken-1","#E53935","darken-2","#D32F2F","darken-3","#C62828","darken-4","#B71C1C","accent-1","#FF8A80","accent-2","#FF5252","accent-3","#FF1744","accent-4","#D50000"],
+  "pink": ["base","#E91E63","lighten-5","#FCE4EC","lighten-4","#F8BBD0","lighten-3","#F48FB1","lighten-2","#F06292","lighten-1","#EC407A","darken-1","#D81B60","darken-2","#C2185B","darken-3","#AD1457","darken-4","#880E4F","accent-1","#FF80AB","accent-2","#FF4081","accent-3","#F50057","accent-4","#C51162"],
+  "purple": ["base","#9C27B0","lighten-5","#F3E5F5","lighten-4","#E1BEE7","lighten-3","#CE93D8","lighten-2","#BA68C8","lighten-1","#AB47BC","darken-1","#8E24AA","darken-2","#7B1FA2","darken-3","#6A1B9A","darken-4","#4A148C","accent-1","#EA80FC","accent-2","#E040FB","accent-3","#D500F9","accent-4","#AA00FF"],
+  "deep-purple": ["base","#673AB7","lighten-5","#EDE7F6","lighten-4","#D1C4E9","lighten-3","#B39DDB","lighten-2","#9575CD","lighten-1","#7E57C2","darken-1","#5E35B1","darken-2","#512DA8","darken-3","#4527A0","darken-4","#311B92","accent-1","#B388FF","accent-2","#7C4DFF","accent-3","#651FFF","accent-4","#6200EA"],
+  "indigo": ["base","#3F51B5","lighten-5","#E8EAF6","lighten-4","#C5CAE9","lighten-3","#9FA8DA","lighten-2","#7986CB","lighten-1","#5C6BC0","darken-1","#3949AB","darken-2","#303F9F","darken-3","#283593","darken-4","#1A237E","accent-1","#8C9EFF","accent-2","#536DFE","accent-3","#3D5AFE","accent-4","#304FFE"],
+  "blue": ["base","#2196F3","lighten-5","#E3F2FD","lighten-4","#BBDEFB","lighten-3","#90CAF9","lighten-2","#64B5F6","lighten-1","#42A5F5","darken-1","#1E88E5","darken-2","#1976D2","darken-3","#1565C0","darken-4","#0D47A1","accent-1","#82B1FF","accent-2","#448AFF","accent-3","#2979FF","accent-4","#2962FF"],
+  "light-blue": ["base","#03A9F4","lighten-5","#E1F5FE","lighten-4","#B3E5FC","lighten-3","#81D4FA","lighten-2","#4FC3F7","lighten-1","#29B6F6","darken-1","#039BE5","darken-2","#0288D1","darken-3","#0277BD","darken-4","#01579B","accent-1","#80D8FF","accent-2","#40C4FF","accent-3","#00B0FF","accent-4","#0091EA"],
+  "cyan": ["base","#00BCD4","lighten-5","#E0F7FA","lighten-4","#B2EBF2","lighten-3","#80DEEA","lighten-2","#4DD0E1","lighten-1","#26C6DA","darken-1","#00ACC1","darken-2","#0097A7","darken-3","#00838F","darken-4","#006064","accent-1","#84FFFF","accent-2","#18FFFF","accent-3","#00E5FF","accent-4","#00B8D4"],
+  "teal": ["base","#009688","lighten-5","#E0F2F1","lighten-4","#B2DFDB","lighten-3","#80CBC4","lighten-2","#4DB6AC","lighten-1","#26A69A","darken-1","#00897B","darken-2","#00796B","darken-3","#00695C","darken-4","#004D40","accent-1","#A7FFEB","accent-2","#64FFDA","accent-3","#1DE9B6","accent-4","#00BFA5"],
+  "green": ["base","#4CAF50","lighten-5","#E8F5E9","lighten-4","#C8E6C9","lighten-3","#A5D6A7","lighten-2","#81C784","lighten-1","#66BB6A","darken-1","#43A047","darken-2","#388E3C","darken-3","#2E7D32","darken-4","#1B5E20","accent-1","#B9F6CA","accent-2","#69F0AE","accent-3","#00E676","accent-4","#00C853"],
+  "light-green": ["base","#8BC34A","lighten-5","#F1F8E9","lighten-4","#DCEDC8","lighten-3","#C5E1A5","lighten-2","#AED581","lighten-1","#9CCC65","darken-1","#7CB342","darken-2","#689F38","darken-3","#558B2F","darken-4","#33691E","accent-1","#CCFF90","accent-2","#B2FF59","accent-3","#76FF03","accent-4","#64DD17"],
+  "lime": ["base","#CDDC39","lighten-5","#F9FBE7","lighten-4","#F0F4C3","lighten-3","#E6EE9C","lighten-2","#DCE775","lighten-1","#D4E157","darken-1","#C0CA33","darken-2","#AFB42B","darken-3","#9E9D24","darken-4","#827717","accent-1","#F4FF81","accent-2","#EEFF41","accent-3","#C6FF00","accent-4","#AEEA00"],
+  "yellow": ["base","#FFEB3B","lighten-5","#FFFDE7","lighten-4","#FFF9C4","lighten-3","#FFF59D","lighten-2","#FFF176","lighten-1","#FFEE58","darken-1","#FDD835","darken-2","#FBC02D","darken-3","#F9A825","darken-4","#F57F17","accent-1","#FFFF8D","accent-2","#FFFF00","accent-3","#FFEA00","accent-4","#FFD600"],
+  "amber": ["base","#FFC107","lighten-5","#FFF8E1","lighten-4","#FFECB3","lighten-3","#FFE082","lighten-2","#FFD54F","lighten-1","#FFCA28","darken-1","#FFB300","darken-2","#FFA000","darken-3","#FF8F00","darken-4","#FF6F00","accent-1","#FFE57F","accent-2","#FFD740","accent-3","#FFC400","accent-4","#FFAB00"],
+  "orange": ["base","#FF9800","lighten-5","#FFF3E0","lighten-4","#FFE0B2","lighten-3","#FFCC80","lighten-2","#FFB74D","lighten-1","#FFA726","darken-1","#FB8C00","darken-2","#F57C00","darken-3","#EF6C00","darken-4","#E65100","accent-1","#FFD180","accent-2","#FFAB40","accent-3","#FF9100","accent-4","#FF6D00"],
+  "deep-orange": ["base","#FF5722","lighten-5","#FBE9E7","lighten-4","#FFCCBC","lighten-3","#FFAB91","lighten-2","#FF8A65","lighten-1","#FF7043","darken-1","#F4511E","darken-2","#E64A19","darken-3","#D84315","darken-4","#BF360C","accent-1","#FF9E80","accent-2","#FF6E40","accent-3","#FF3D00","accent-4","#DD2C00"],
+  "brown": ["base","#795548","lighten-5","#EFEBE9","lighten-4","#D7CCC8","lighten-3","#BCAAA4","lighten-2","#A1887F","lighten-1","#8D6E63","darken-1","#6D4C41","darken-2","#5D4037","darken-3","#4E342E","darken-4","#3E2723"],
+  "blue-grey": ["base","#607D8B","lighten-5","#ECEFF1","lighten-4","#CFD8DC","lighten-3","#B0BEC5","lighten-2","#90A4AE","lighten-1","#78909C","darken-1","#546E7A","darken-2","#455A64","darken-3","#37474F","darken-4","#263238"],
+  "grey": ["base","#9E9E9E","lighten-5","#FAFAFA","lighten-4","#F5F5F5","lighten-3","#EEEEEE","lighten-2","#E0E0E0","lighten-1","#BDBDBD","darken-1","#757575","darken-2","#616161","darken-3","#424242","darken-4","#212121"]
+};
+
+// ======= MENU COLORI =======
+const colorBtn = document.getElementById("colorBtn");
+const colorMenu = document.getElementById("colorMenu");
+let savedSelection = null;
+
+function saveSelection() {
+  const sel = window.getSelection();
+  if (sel.rangeCount > 0) {
+    savedSelection = sel.getRangeAt(0).cloneRange();
+  }
+}
+
+function restoreSelection() {
+  if (savedSelection) {
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedSelection);
+  }
+}
+
+function createColorMenu() {
+  colorMenu.innerHTML = "";
+  
+  Object.keys(COLORS).forEach(colorGroup => {
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "color-group";
+    
+    // Header cliccabile
+    const header = document.createElement("div");
+    header.className = "color-group-header";
+    
+    const titleDiv = document.createElement("div");
+    titleDiv.className = "color-group-title";
+    
+    const preview = document.createElement("div");
+    preview.className = "color-group-preview";
+    preview.style.background = COLORS[colorGroup][1];
+    
+    const titleText = document.createElement("span");
+    titleText.textContent = colorGroup.replace(/-/g, ' ');
+    
+    titleDiv.appendChild(preview);
+    titleDiv.appendChild(titleText);
+    
+    const arrow = document.createElement("span");
+    arrow.className = "color-group-arrow";
+    arrow.textContent = "▶";
+    
+    header.appendChild(titleDiv);
+    header.appendChild(arrow);
+    
+    // Griglia colori (nascosta di default)
+    const swatchesGrid = document.createElement("div");
+    swatchesGrid.className = "color-swatches";
+    
+    COLORS[colorGroup].forEach((val, i, arr) => {
+      if (i % 2 === 0) {
+        const shade = arr[i];
+        const hex = arr[i+1];
+        
+        const btn = document.createElement("button");
+        btn.className = "color-swatch-btn";
+        btn.title = `${colorGroup}-${shade}`;
+        
+        const inner = document.createElement("div");
+        inner.className = "color-swatch-inner";
+        inner.style.background = hex;
+        
+        btn.appendChild(inner);
+        btn.onmousedown = function(e) {
+          e.preventDefault(); // Previene la deselezione del testo
+        };
+        btn.onclick = function(e) {
+          e.preventDefault();
+          restoreSelection();
+          applyColorClass(`text-${colorGroup}-${shade}`);
+          colorMenu.classList.add("hidden");
+        };
+        
+        swatchesGrid.appendChild(btn);
+      }
+    });
+    
+    // Toggle al click sull'header
+    header.onmousedown = function(e) {
+      e.preventDefault(); // Previene la deselezione del testo
+    };
+    header.onclick = function(e) {
+      e.preventDefault();
+      
+      const wasVisible = swatchesGrid.classList.contains("visible");
+      
+      // Chiudi tutte le altre categorie
+      const allSwatches = colorMenu.querySelectorAll('.color-swatches');
+      const allArrows = colorMenu.querySelectorAll('.color-group-arrow');
+      allSwatches.forEach(s => s.classList.remove("visible"));
+      allArrows.forEach(a => a.classList.remove("expanded"));
+      
+      // Toggle questa categoria
+      if (!wasVisible) {
+        swatchesGrid.classList.add("visible");
+        arrow.classList.add("expanded");
+        
+        // Auto-scroll per rendere visibile la categoria aperta
+        setTimeout(() => {
+          const groupTop = groupDiv.offsetTop;
+          const groupHeight = groupDiv.offsetHeight;
+          const menuHeight = colorMenu.offsetHeight;
+          const menuScrollTop = colorMenu.scrollTop;
+          
+          // Calcola se la categoria è visibile
+          const groupBottom = groupTop + groupHeight;
+          const menuBottom = menuScrollTop + menuHeight;
+          
+          if (groupBottom > menuBottom) {
+            // Scrolla per mostrare l'intera categoria
+            colorMenu.scrollTop = groupTop - 10;
+          } else if (groupTop < menuScrollTop) {
+            // Scrolla per mostrare l'inizio della categoria
+            colorMenu.scrollTop = groupTop - 10;
+          }
+        }, 50); // Piccolo delay per permettere l'espansione
+      }
+    };
+    
+    groupDiv.appendChild(header);
+    groupDiv.appendChild(swatchesGrid);
+    colorMenu.appendChild(groupDiv);
+  });
+}
+
+colorBtn.onclick = function(e) {
+  saveSelection(); // Salva la selezione prima di aprire il menu
+  createColorMenu();
+  
+  // Posiziona il menu sotto il bottone
+  const rect = colorBtn.getBoundingClientRect();
+  colorMenu.style.top = (rect.bottom + 5) + 'px';
+  colorMenu.style.left = rect.left + 'px';
+  
+  colorMenu.classList.toggle("hidden");
+};
+
+document.addEventListener("click", function(e) {
+  if (!colorMenu.contains(e.target) && e.target !== colorBtn) {
+    colorMenu.classList.add("hidden");
+  }
+});
+
+/* ==================== FUNZIONI TEMA ==================== */
+function changeTheme(theme) {
+  // Rimuovi tutte le classi tema
+  document.body.classList.remove('theme-dark', 'theme-dark-white-editor');
+  
+  // Aggiungi la classe del nuovo tema se non è light
+  if (theme !== 'light') {
+    document.body.classList.add(`theme-${theme}`);
+  }
+  
+  // Aggiorna i bottoni attivi
+  document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(`theme-${theme}`).classList.add('active');
+  
+  // Salva la preferenza
+  localStorage.setItem('editor-theme', theme);
+}
+
+// Carica il tema salvato all'avvio
+window.addEventListener('DOMContentLoaded', function() {
+  const savedTheme = localStorage.getItem('editor-theme') || 'light';
+  changeTheme(savedTheme);
+});
+
+/* ==================== FUNZIONI DIALOG CUSTOM ==================== */
+function showCustomPrompt(title, message, defaultValue = "", callback) {
+  const overlay = document.createElement('div');
+  overlay.className = 'dialog-overlay';
+  
+  const dialog = document.createElement('div');
+  dialog.className = 'custom-dialog';
+  
+  dialog.innerHTML = `
+    <div class="dialog-title">${title}</div>
+    <div class="dialog-message">${message}</div>
+    <input type="text" class="dialog-input" value="${defaultValue}" autofocus>
+    <div class="dialog-buttons">
+      <button class="dialog-btn dialog-btn-cancel">Annulla</button>
+      <button class="dialog-btn dialog-btn-confirm">Conferma</button>
+    </div>
+  `;
+  
+  overlay.appendChild(dialog);
+  document.body.appendChild(overlay);
+  
+  const input = dialog.querySelector('.dialog-input');
+  const cancelBtn = dialog.querySelector('.dialog-btn-cancel');
+  const confirmBtn = dialog.querySelector('.dialog-btn-confirm');
+  
+  input.focus();
+  input.select();
+  
+  const close = (value) => {
+    overlay.remove();
+    if (value !== null) callback(value);
+  };
+  
+  cancelBtn.onclick = () => close(null);
+  confirmBtn.onclick = () => close(input.value);
+  input.onkeydown = (e) => {
+    if (e.key === 'Enter') close(input.value);
+    if (e.key === 'Escape') close(null);
+  };
+  overlay.onclick = (e) => {
+    if (e.target === overlay) close(null);
+  };
+}
+
+function showCustomConfirm(title, message, callback) {
+  const overlay = document.createElement('div');
+  overlay.className = 'dialog-overlay';
+  
+  const dialog = document.createElement('div');
+  dialog.className = 'custom-dialog';
+  
+  dialog.innerHTML = `
+    <div class="dialog-title">${title}</div>
+    <div class="dialog-message">${message}</div>
+    <div class="dialog-buttons">
+      <button class="dialog-btn dialog-btn-cancel">Annulla</button>
+      <button class="dialog-btn dialog-btn-danger">Conferma</button>
+    </div>
+  `;
+  
+  overlay.appendChild(dialog);
+  document.body.appendChild(overlay);
+  
+  const cancelBtn = dialog.querySelector('.dialog-btn-cancel');
+  const confirmBtn = dialog.querySelector('.dialog-btn-danger');
+  
+  const close = (confirmed) => {
+    overlay.remove();
+    callback(confirmed);
+  };
+  
+  cancelBtn.onclick = () => close(false);
+  confirmBtn.onclick = () => close(true);
+  overlay.onclick = (e) => {
+    if (e.target === overlay) close(false);
+  };
+}
+
+function showCustomAlert(title, message) {
+  const overlay = document.createElement('div');
+  overlay.className = 'dialog-overlay';
+  
+  const dialog = document.createElement('div');
+  dialog.className = 'custom-dialog';
+  
+  dialog.innerHTML = `
+    <div class="dialog-title">${title}</div>
+    <div class="dialog-message">${message}</div>
+    <div class="dialog-buttons">
+      <button class="dialog-btn dialog-btn-confirm">OK</button>
+    </div>
+  `;
+  
+  overlay.appendChild(dialog);
+  document.body.appendChild(overlay);
+  
+  const okBtn = dialog.querySelector('.dialog-btn-confirm');
+  
+  const close = () => overlay.remove();
+  
+  okBtn.onclick = close;
+  overlay.onclick = (e) => {
+    if (e.target === overlay) close();
+  };
+}
+
+/* ==================== FUNZIONI BASE ==================== */
+function execCmd(cmd) { 
+  document.execCommand(cmd, false, null); 
+  updateOutput(); 
+}
+
+function clearEditor() { 
+  showCustomConfirm(
+    '🗑️ Pulisci Editor',
+    'Sei sicuro di voler cancellare tutto il contenuto?',
+    (confirmed) => {
+      if (confirmed) {
+        document.getElementById("editor").innerHTML = ""; 
+        updateOutput();
+      }
+    }
+  );
+}
+
+function copyHTML() { 
+  const t = document.getElementById("html-output"); 
+  t.select(); 
+  document.execCommand("copy");
+  showCustomAlert('✅ Successo', 'HTML copiato negli appunti!');
+}
+
+function resetColor() { 
+  const sel = window.getSelection(); 
+  if (!sel.rangeCount) return; 
+  const range = sel.getRangeAt(0); 
+  if (range.collapsed) return; 
+  const fragment = range.extractContents(); 
+  function removeTextClasses(node) { 
+    if(node.nodeType === 1) { 
+      node.className = node.className.split(" ").filter(c => !c.startsWith("text-")).join(" "); 
+      Array.from(node.childNodes).forEach(removeTextClasses); 
+    } 
+  } 
+  Array.from(fragment.childNodes).forEach(removeTextClasses); 
+  range.insertNode(fragment); 
+  updateOutput(); 
+}
+
+function applyColorClass(colorClass) { 
+  const sel = window.getSelection(); 
+  if (!sel.rangeCount) return; 
+  const range = sel.getRangeAt(0); 
+  if (range.collapsed) return; 
+  
+  const fragment = range.extractContents(); 
+  
+  function removeColorClasses(node) {
+    if (node.nodeType === 1) { 
+      node.className = node.className.split(" ").filter(c => !c.startsWith("text-")).join(" ");
+      Array.from(node.childNodes).forEach(removeColorClasses); 
+    }
+  } 
+  
+  Array.from(fragment.childNodes).forEach(removeColorClasses); 
+  
+  const wrapper = document.createElement("span"); 
+  wrapper.classList.add(colorClass); 
+  wrapper.appendChild(fragment); 
+  range.insertNode(wrapper); 
+  
+  sel.removeAllRanges(); 
+  const newRange = document.createRange(); 
+  newRange.selectNodeContents(wrapper); 
+  sel.addRange(newRange); 
+  updateOutput(); 
+}
+
+function updateOutput() { 
+  document.getElementById("html-output").value = document.getElementById("editor").innerHTML; 
+}
+
+function insertBasicTable() {
+  showCustomPrompt('📊 Inserisci Tabella', 'Numero di righe:', '3', (rows) => {
+    if (rows === null) return;
+    const numRows = parseInt(rows);
+    if (!numRows || numRows < 1) return;
+    
+    showCustomPrompt('📊 Inserisci Tabella', 'Numero di colonne:', '3', (cols) => {
+      if (cols === null) return;
+      const numCols = parseInt(cols);
+      if (!numCols || numCols < 1) return;
+
+      let html = "<table border='1' style='border-collapse:collapse;width:100%;margin:1rem 0'>";
+      for (let i = 0; i < numRows; i++) {
+        html += "<tr>";
+        for (let j = 0; j < numCols; j++) {
+          html += "<td style='padding:8px;border:1px solid #ccc'>Cella</td>";
+        }
+        html += "</tr>";
+      }
+      html += "</table><br>";
+
+      document.execCommand("insertHTML", false, html);
+      updateOutput();
+    });
+  });
+}
+
+// Animazione ciclo RGB per il titolo
+document.addEventListener('DOMContentLoaded', () => {
+  let hue = 0;
+  const interval = 4000 / 360; // 4 secondi per ciclo completo
+  setInterval(() => {
+    hue = (hue + 1) % 360;
+    document.documentElement.style.setProperty('--hue', hue);
+  }, interval);
+});
+</script>
+
+</body>
+</html>
