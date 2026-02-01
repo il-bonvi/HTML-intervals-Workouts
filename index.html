@@ -306,7 +306,7 @@ button[onclick="copyHTML()"]:hover {
 }
 
 #editor:empty::before {
-  content: 'Inizia a scrivere qui...';
+  content: attr(data-placeholder);
   color: var(--text-secondary);
   opacity: 0.5;
 }
@@ -712,10 +712,16 @@ footer a:hover {
   <header>
     <div class="header-controls">
       <h1>✨ HTML by Bonvi ❤️</h1>
-      <div class="theme-selector">
-        <button class="theme-btn active" onclick="changeTheme('light')" id="theme-light">☀️ Chiaro</button>
-        <button class="theme-btn" onclick="changeTheme('dark')" id="theme-dark">🌙 Scuro</button>
-        <button class="theme-btn" onclick="changeTheme('dark-white-editor')" id="theme-dark-white-editor">🌗 Ibrido</button>
+      <div style="display: flex; gap: 1rem;">
+        <div class="theme-selector">
+          <button class="theme-btn active" onclick="changeLanguage('ita')" id="lang-ita">🇮🇹</button>
+          <button class="theme-btn" onclick="changeLanguage('eng')" id="lang-eng">🇬🇧</button>
+        </div>
+        <div class="theme-selector">
+          <button class="theme-btn active" onclick="changeTheme('light')" id="theme-light">☀️</button>
+          <button class="theme-btn" onclick="changeTheme('dark')" id="theme-dark">🌙</button>
+          <button class="theme-btn" onclick="changeTheme('dark-white-editor')" id="theme-dark-white-editor">🌗</button>
+        </div>
       </div>
     </div>
   </header>
@@ -724,27 +730,27 @@ footer a:hover {
 
   <div class="editor-wrapper">
     <div class="toolbar">
-      <button onclick="execCmd('bold')"><b>Grassetto</b></button>
-      <button onclick="execCmd('italic')"><i>Corsivo</i></button>
-      <button onclick="execCmd('underline')"><u>Sottolineato</u></button>
-      <button id="colorBtn" type="button">🎨 Colore</button>
-      <button onclick="resetColor()">Reset Colore</button>
-      <button onclick="execCmd('insertUnorderedList')">• Elenco</button>
-      <button onclick="execCmd('insertOrderedList')">1. Elenco</button>
-      <button onclick="execCmd('justifyLeft')">Allinea SX</button>
-      <button onclick="execCmd('justifyCenter')">Centra</button>
-      <button onclick="execCmd('justifyRight')">Allinea DX</button>
-      <button onclick="execCmd('insertHorizontalRule')">━ Linea</button>
-      <button onclick="insertBasicTable()">📊 Tabella</button>
-      <button onclick="clearEditor()">🗑️ Pulisci</button>
-      <button onclick="copyHTML()">📋 Copia HTML</button>
+      <button onclick="execCmd('bold')"><b><span data-lang-ita="Grassetto" data-lang-eng="Bold">Grassetto</span></b></button>
+      <button onclick="execCmd('italic')"><i><span data-lang-ita="Corsivo" data-lang-eng="Italic">Corsivo</span></i></button>
+      <button onclick="execCmd('underline')"><u><span data-lang-ita="Sottolineato" data-lang-eng="Underline">Sottolineato</span></u></button>
+      <button id="colorBtn" type="button">🎨 <span data-lang-ita="Colore" data-lang-eng="Color">Colore</span></button>
+      <button onclick="resetColor()"><span data-lang-ita="Reset Colore" data-lang-eng="Reset Color">Reset Colore</span></button>
+      <button onclick="execCmd('insertUnorderedList')">• <span data-lang-ita="Elenco" data-lang-eng="List">Elenco</span></button>
+      <button onclick="execCmd('insertOrderedList')">1. <span data-lang-ita="Elenco" data-lang-eng="List">Elenco</span></button>
+      <button onclick="execCmd('justifyLeft')"><span data-lang-ita="Allinea SX" data-lang-eng="Align Left">Allinea SX</span></button>
+      <button onclick="execCmd('justifyCenter')"><span data-lang-ita="Centra" data-lang-eng="Center">Centra</span></button>
+      <button onclick="execCmd('justifyRight')"><span data-lang-ita="Allinea DX" data-lang-eng="Align Right">Allinea DX</span></button>
+      <button onclick="execCmd('insertHorizontalRule')">━ <span data-lang-ita="Linea" data-lang-eng="Line">Linea</span></button>
+      <button onclick="insertBasicTable()">📊 <span data-lang-ita="Tabella" data-lang-eng="Table">Tabella</span></button>
+      <button onclick="clearEditor()">🗑️ <span data-lang-ita="Pulisci" data-lang-eng="Clear">Pulisci</span></button>
+      <button onclick="copyHTML()">📋 <span data-lang-ita="Copia HTML" data-lang-eng="Copy HTML">Copia HTML</span></button>
     </div>
 
-    <div id="editor" contenteditable="true" oninput="updateOutput()"></div>
+    <div id="editor" contenteditable="true" oninput="updateOutput()" data-placeholder="Inizia a scrivere qui..."></div>
   </div>
 
   <div class="output-section">
-    <div class="output-label">Codice HTML Generato</div>
+    <div class="output-label" data-lang-ita="Codice HTML Generato" data-lang-eng="Generated HTML Code">Codice HTML Generato</div>
     <textarea id="html-output" readonly></textarea>
   </div>
 
@@ -978,8 +984,8 @@ function changeTheme(theme) {
     document.body.classList.add(`theme-${theme}`);
   }
   
-  // Aggiorna i bottoni attivi
-  document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+  // Aggiorna i bottoni attivi del tema
+  document.querySelectorAll('#theme-light, #theme-dark, #theme-dark-white-editor').forEach(btn => btn.classList.remove('active'));
   document.getElementById(`theme-${theme}`).classList.add('active');
   
   // Salva la preferenza
@@ -990,7 +996,65 @@ function changeTheme(theme) {
 window.addEventListener('DOMContentLoaded', function() {
   const savedTheme = localStorage.getItem('editor-theme') || 'light';
   changeTheme(savedTheme);
+  
+  // Carica la lingua salvata
+  const savedLang = localStorage.getItem('editor-lang') || 'ita';
+  changeLanguage(savedLang);
 });
+
+/* ==================== FUNZIONI LINGUA ==================== */
+const translations = {
+  ita: {
+    editorPlaceholder: 'Inizia a scrivere qui...',
+    dialogCancel: 'Annulla',
+    dialogConfirm: 'Conferma',
+    dialogOk: 'OK',
+    clearTitle: '🗑️ Pulisci Editor',
+    clearMessage: 'Sei sicuro di voler cancellare tutto il contenuto?',
+    successTitle: '✅ Successo',
+    successMessage: 'HTML copiato negli appunti!',
+    tableTitle: '📊 Inserisci Tabella',
+    tableRows: 'Numero di righe:',
+    tableCols: 'Numero di colonne:',
+    tableCell: 'Cella'
+  },
+  eng: {
+    editorPlaceholder: 'Start writing here...',
+    dialogCancel: 'Cancel',
+    dialogConfirm: 'Confirm',
+    dialogOk: 'OK',
+    clearTitle: '🗑️ Clear Editor',
+    clearMessage: 'Are you sure you want to delete all content?',
+    successTitle: '✅ Success',
+    successMessage: 'HTML copied to clipboard!',
+    tableTitle: '📊 Insert Table',
+    tableRows: 'Number of rows:',
+    tableCols: 'Number of columns:',
+    tableCell: 'Cell'
+  }
+};
+
+let currentLang = 'ita';
+
+function changeLanguage(lang) {
+  currentLang = lang;
+  
+  // Aggiorna i bottoni attivi della lingua
+  document.querySelectorAll('#lang-ita, #lang-eng').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(`lang-${lang}`).classList.add('active');
+  
+  // Aggiorna tutti gli elementi con attributi data-lang
+  document.querySelectorAll('[data-lang-ita]').forEach(el => {
+    el.textContent = el.getAttribute(`data-lang-${lang}`);
+  });
+  
+  // Aggiorna il placeholder dell'editor
+  const editor = document.getElementById('editor');
+  editor.setAttribute('data-placeholder', translations[lang].editorPlaceholder);
+  
+  // Salva la preferenza
+  localStorage.setItem('editor-lang', lang);
+}
 
 /* ==================== FUNZIONI DIALOG CUSTOM ==================== */
 function showCustomPrompt(title, message, defaultValue = "", callback) {
@@ -1005,8 +1069,8 @@ function showCustomPrompt(title, message, defaultValue = "", callback) {
     <div class="dialog-message">${message}</div>
     <input type="text" class="dialog-input" value="${defaultValue}" autofocus>
     <div class="dialog-buttons">
-      <button class="dialog-btn dialog-btn-cancel">Annulla</button>
-      <button class="dialog-btn dialog-btn-confirm">Conferma</button>
+      <button class="dialog-btn dialog-btn-cancel">${translations[currentLang].dialogCancel}</button>
+      <button class="dialog-btn dialog-btn-confirm">${translations[currentLang].dialogConfirm}</button>
     </div>
   `;
   
@@ -1047,8 +1111,8 @@ function showCustomConfirm(title, message, callback) {
     <div class="dialog-title">${title}</div>
     <div class="dialog-message">${message}</div>
     <div class="dialog-buttons">
-      <button class="dialog-btn dialog-btn-cancel">Annulla</button>
-      <button class="dialog-btn dialog-btn-danger">Conferma</button>
+      <button class="dialog-btn dialog-btn-cancel">${translations[currentLang].dialogCancel}</button>
+      <button class="dialog-btn dialog-btn-danger">${translations[currentLang].dialogConfirm}</button>
     </div>
   `;
   
@@ -1081,7 +1145,7 @@ function showCustomAlert(title, message) {
     <div class="dialog-title">${title}</div>
     <div class="dialog-message">${message}</div>
     <div class="dialog-buttons">
-      <button class="dialog-btn dialog-btn-confirm">OK</button>
+      <button class="dialog-btn dialog-btn-confirm">${translations[currentLang].dialogOk}</button>
     </div>
   `;
   
@@ -1106,8 +1170,8 @@ function execCmd(cmd) {
 
 function clearEditor() { 
   showCustomConfirm(
-    '🗑️ Pulisci Editor',
-    'Sei sicuro di voler cancellare tutto il contenuto?',
+    translations[currentLang].clearTitle,
+    translations[currentLang].clearMessage,
     (confirmed) => {
       if (confirmed) {
         document.getElementById("editor").innerHTML = ""; 
@@ -1121,7 +1185,7 @@ function copyHTML() {
   const t = document.getElementById("html-output"); 
   t.select(); 
   document.execCommand("copy");
-  showCustomAlert('✅ Successo', 'HTML copiato negli appunti!');
+  showCustomAlert(translations[currentLang].successTitle, translations[currentLang].successMessage);
 }
 
 function resetColor() { 
@@ -1175,12 +1239,12 @@ function updateOutput() {
 }
 
 function insertBasicTable() {
-  showCustomPrompt('📊 Inserisci Tabella', 'Numero di righe:', '3', (rows) => {
+  showCustomPrompt(translations[currentLang].tableTitle, translations[currentLang].tableRows, '3', (rows) => {
     if (rows === null) return;
     const numRows = parseInt(rows);
     if (!numRows || numRows < 1) return;
     
-    showCustomPrompt('📊 Inserisci Tabella', 'Numero di colonne:', '3', (cols) => {
+    showCustomPrompt(translations[currentLang].tableTitle, translations[currentLang].tableCols, '3', (cols) => {
       if (cols === null) return;
       const numCols = parseInt(cols);
       if (!numCols || numCols < 1) return;
@@ -1189,7 +1253,7 @@ function insertBasicTable() {
       for (let i = 0; i < numRows; i++) {
         html += "<tr>";
         for (let j = 0; j < numCols; j++) {
-          html += "<td style='padding:8px;border:1px solid #ccc'>Cella</td>";
+          html += `<td style='padding:8px;border:1px solid #ccc'>${translations[currentLang].tableCell}</td>`;
         }
         html += "</tr>";
       }
