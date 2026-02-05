@@ -1236,7 +1236,44 @@ function applyColorClass(colorClass) {
   updateOutput(); 
 }
 
+function mergeLists() {
+  const editor = document.getElementById("editor");
+  let changed = true;
+  
+  while (changed) {
+    changed = false;
+    const lists = editor.querySelectorAll('ul, ol');
+    
+    for (let i = 0; i < lists.length; i++) {
+      const currentList = lists[i];
+      let nextElement = currentList.nextElementSibling;
+      
+      // Salta eventuali <br> o nodi di testo vuoti
+      while (nextElement && (
+        nextElement.tagName === 'BR' || 
+        (nextElement.nodeType === 3 && !nextElement.textContent.trim())
+      )) {
+        const toRemove = nextElement;
+        nextElement = nextElement.nextElementSibling;
+        toRemove.remove();
+        changed = true;
+      }
+      
+      // Se il prossimo elemento è una lista dello stesso tipo, uniscila
+      if (nextElement && nextElement.tagName === currentList.tagName) {
+        while (nextElement.firstChild) {
+          currentList.appendChild(nextElement.firstChild);
+        }
+        nextElement.remove();
+        changed = true;
+        break;
+      }
+    }
+  }
+}
+
 function updateOutput() { 
+  mergeLists();
   document.getElementById("html-output").value = document.getElementById("editor").innerHTML; 
 }
 
